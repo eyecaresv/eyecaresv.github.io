@@ -140,6 +140,23 @@
         "現状、物販インセンティブがある商品はアイケアグラスのみです。アイケアグラスのセミオーダーは2,000円、フルオーダーは3,000円です。メモリックとメリンゾールには現状インセンティブ設定はありません。ただし販売金額が入金金額に加算されるため、結果的にグレードアップにつながります。",
     },
     {
+      id: "incentive-conditions",
+      category: "人事・育成",
+      title: "インセンティブ発生条件",
+      keywords: ["インセンティブ", "条件", "発生条件", "新規次回", "契約", "2回目", "アイケアグラス", "アップセル", "既存"],
+      answer:
+        "インセンティブは、グレードと販売内容によって計算方法が異なります。発生条件は、新規から新規次回、 新規次回から契約、2回目来店から契約、アイケアグラス販売時、3回券アップセルの5つです。既存の回数券更新やサブスク購入はインセンティブなしです。",
+      structured: {
+        title: "インセンティブ条件",
+        conclusion: "主な発生条件は5つです。",
+        reason: "新規獲得、契約化、アイケアグラス販売、3回券アップセルなど、成果に応じて計算されます。",
+        note: "既存の回数券更新やサブスク購入はインセンティブなしです。",
+        detail:
+          "条件は、新規から新規次回、新規次回から契約、2回目来店から契約、アイケアグラス販売時、3回券アップセルです。グレードによって対象や計算方法が異なるため、詳細はマニュアルのインセンティブ章を確認してください。",
+        nextQuestions: ["物販インセンティブは？", "回数券アップグレード期限は？", "グレード制度について", "ヘルプ費用は？"],
+      },
+    },
+    {
       id: "new-store-evidence",
       category: "営業・説明",
       title: "新規店舗で使う実績データ・エビデンス",
@@ -206,6 +223,40 @@
       },
     },
     {
+      id: "ticket-upgrade",
+      category: "サービス・料金",
+      title: "回数券アップグレード期限",
+      keywords: ["回数券", "アップグレード", "グレードアップ", "差額", "切り替え", "期限", "2回目", "3回目", "5回目"],
+      answer:
+        "回数券のアップグレードは、3回券と4回券は2回目まで、8回券は3回目まで、16回券は5回目までに申請が必要です。差額で上位回数券へ切り替えできますが、申請期限を過ぎた場合は原則として通常の更新扱いになります。インセンティブ計算も関係するため、迷う場合は本部へ確認してください。",
+      structured: {
+        title: "回数券アップグレード",
+        conclusion: "3回券・4回券は2回目まで、8回券は3回目まで、16回券は5回目までです。",
+        reason: "下位回数券から上位回数券へ差額で切り替える場合、購入後の申請タイミングに制限があります。",
+        note: "期限を過ぎた場合やインセンティブ判断が絡む場合は、本部へ確認してください。",
+        detail:
+          "3回券からの変更は2回目まで、4回券からの変更も2回目まで、8回券からの変更は3回目まで、16回券からの変更は5回目までに申請が必要です。",
+        nextQuestions: ["回数券の有効期限は？", "インビテーションチケットとは？", "インセンティブ条件は？", "返金保証の条件は？"],
+      },
+    },
+    {
+      id: "invitation-ticket",
+      category: "サービス・料金",
+      title: "インビテーションチケット",
+      keywords: ["インビテーション", "チケット", "期限切れ", "救済", "プレゼント", "シェア", "譲渡", "購入店舗"],
+      answer:
+        "インビテーションチケットは、回数券を有効期限内に使い切れなかった分や、サブスク繰越分を救済するためのチケットです。本人利用は月1回まで、他の人へは通常50分コース券としてプレゼントできます。ただし既存のお客様への譲渡は不可で、購入店舗でのみ利用できます。",
+      structured: {
+        title: "インビテーションチケット",
+        conclusion: "期限内に使い切れなかった分を救済するチケットです。",
+        reason: "回数券やサブスク繰越分を、完全に無駄にしないための救済運用です。",
+        note: "既存のお客様への譲渡は不可です。利用は購入店舗のみです。",
+        detail:
+          "本人が使う場合は月1回まで利用できます。他の人へプレゼントする場合は、通常の50分コース券として渡せます。期限内にシェアしていた人がいた場合のみシェア可能です。",
+        nextQuestions: ["回数券の有効期限は？", "店舗間移動はできますか？", "キャンセル対応は？", "返金対応の手順は？"],
+      },
+    },
+    {
       id: "subscription-carryover",
       category: "サービス・料金",
       title: "サブスクの繰越ルール",
@@ -220,6 +271,40 @@
         detail:
           "サブスクの未消化分は翌月まで繰越可能です。翌々月以降への繰越はできません。プラン変更や休止は前月10日までの申請が基本で、それ以降は翌々月からの反映になります。当日キャンセルは1回分消化の扱いです。",
         nextQuestions: ["サブスクの領収書は？", "当日キャンセルはどう扱う？", "回数券の有効期限は？", "返金保証の条件は？"],
+      },
+    },
+    {
+      id: "subscription-pricing",
+      category: "サービス・料金",
+      title: "サブスク料金",
+      keywords: ["サブスク料金", "サブスク", "定額", "月額", "プラチナ", "ベーシック", "ライト", "メンテナンス", "通い放題", "VIP"],
+      answer:
+        "通常サブスクは、プラチナ月8回80,000円、ベーシック月4回48,000円、ライト月2回28,000円、メンテナンス月1回15,000円です。通い放題プランは月額39,800円です。VIP会員は16回終了後限定で、月8回80,000円、月4回40,000円、月2回20,000円、月1回10,000円です。",
+      structured: {
+        title: "サブスク料金",
+        conclusion: "通常は月1回15,000円から、通い放題は39,800円です。",
+        reason: "通い方に合わせて、通常会員・通い放題・VIP会員の3系統があります。",
+        note: "通常会員は最低3ヶ月間の来店必須です。VIP会員は16回終了後限定です。",
+        detail:
+          "通常サブスクは、プラチナ月8回80,000円、ベーシック月4回48,000円、ライト月2回28,000円、メンテナンス月1回15,000円です。通い放題プランは月額39,800円。VIP会員は16回終了後限定で、月8回80,000円、月4回40,000円、月2回20,000円、月1回10,000円です。",
+        nextQuestions: ["サブスクの繰越ルールは？", "サブスクの領収書は？", "入会金はいくら？", "当日キャンセルは？"],
+      },
+    },
+    {
+      id: "menu-pricing",
+      category: "サービス・料金",
+      title: "サービス料金の確認",
+      keywords: ["料金", "メニュー", "価格", "回数券", "都度払い", "入会金", "事務手数料", "法人", "サービス"],
+      answer:
+        "基本メニューは全店共通で、施術は50分、初回のみ80分です。回数券は30回345,000円、16回200,000円、8回108,000円、4回58,000円、3回新規限定29,800円です。都度払いは前払いなし20,000円、前払いあり18,000円です。入会金は33,000円、事務手数料は5,500円です。",
+      structured: {
+        title: "サービス・料金",
+        conclusion: "基本メニューは全店共通で、回数券中心の運用です。",
+        reason: "習慣形成を目的に、継続して通いやすい回数券・サブスク設計になっています。",
+        note: "キャンペーンや法人メニューは条件があるため、最新のマニュアル確認がおすすめです。",
+        detail:
+          "回数券は30回345,000円、16回200,000円、8回108,000円、4回58,000円、3回新規限定29,800円です。都度払いは前払いなし20,000円、前払いあり18,000円。入会金は33,000円、事務手数料は5,500円です。",
+        nextQuestions: ["回数券の有効期限は？", "サブスク料金を教えて", "入会金はいくら？", "都度払いはいくら？"],
       },
     },
     {
@@ -279,15 +364,32 @@
       title: "キャンセル対応",
       keywords: ["キャンセル", "当日キャンセル", "予約変更", "変更", "店舗運営", "消化", "1回分"],
       answer:
-        "当日キャンセルは、基本的に1回分消化の扱いです。予約変更やキャンセルの案内は、店舗ルールをお客様にわかりやすく伝え、例外対応が必要な場合は本部確認を行ってください。体調不良など判断が必要なケースは、記録を残して対応するのが安全です。",
+        "当日キャンセル・当日の時間変更は、基本的に1回分消化の扱いです。キャンセルや時間変更を希望される場合は、前日20時まで、または利用店舗の前日営業時間内に連絡いただくよう案内してください。病気や怪我などやむを得ない事情があり、店舗承認がある場合は一度だけ変更を承れる場合があります。",
       structured: {
         title: "キャンセル対応",
-        conclusion: "当日キャンセルは、基本的に1回分消化です。",
-        reason: "予約枠を確保しているため、直前キャンセルは店舗運営への影響が大きいためです。",
-        note: "体調不良など例外判断が必要な場合は、記録を残して本部へ確認してください。",
+        conclusion: "当日キャンセル・当日の時間変更は、基本的に1回分消化です。",
+        reason: "予約枠を確保しているため、直前キャンセルや当日の時間変更は店舗運営への影響が大きいためです。",
+        note: "変更希望は前日20時まで、または利用店舗の前日営業時間内に連絡いただく案内が基本です。",
         detail:
-          "当日キャンセルは、基本的に1回分消化の扱いです。予約変更やキャンセルの案内は、店舗ルールをお客様にわかりやすく伝え、例外対応が必要な場合は本部確認を行ってください。",
+          "当日キャンセル・当日の時間変更は、基本的に1回分消化の扱いです。病気や怪我などやむを得ない事情があり、店舗承認がある場合は一度だけ変更を承れる場合があります。判断に迷う場合は記録を残して本部へ確認してください。",
         nextQuestions: ["サブスクの繰越ルールは？", "返金対応の手順は？", "就業規則について", "ヘルプ費用は？"],
+      },
+    },
+    {
+      id: "daily-report-fix",
+      category: "店舗運営",
+      title: "日計・客報の修正依頼",
+      keywords: ["日計", "客報", "集計シート", "修正", "修正依頼", "データ修正", "フォーム", "報告"],
+      answer:
+        "日計フォーム、客報フォーム、集計シートの内容を修正したい場合は、グループLINEで黒澤さんをメンションし、どのデータを、何行目・何列目で、修正前から修正後へどう変えるかを明記して依頼します。修正前後を具体的に書くと、確認が早くなります。",
+      structured: {
+        title: "データ修正依頼",
+        conclusion: "グループLINEで黒澤さんへ、修正前後を明記して依頼します。",
+        reason: "日計・客報・集計シートは、どのデータのどの行列かが分からないと修正に時間がかかるためです。",
+        note: "行番号、列、修正前、修正後を必ず入れてください。",
+        detail:
+          "@黒澤\n〇〇データ修正依頼\n行〇番：列〇\n修正前内容 → 修正後内容\n上記修正をお願いいたします。",
+        nextQuestions: ["日計フォームはどこ？", "Squareの操作方法は？", "領収書はどう発行する？", "返金対応の手順は？"],
       },
     },
     {
@@ -333,28 +435,42 @@
     { label: "店舗運営", icon: "⌂", question: "店舗運営について教えてください" },
   ];
 
+  const extraManualSections = [
+    { label: "集客・HPB", icon: "⌁", question: "HPBについて教えてください" },
+    { label: "広告", icon: "▥", question: "広告について教えてください" },
+    { label: "研修", icon: "⌃", question: "研修について教えてください" },
+    { label: "契約", icon: "□", question: "契約について教えてください" },
+    { label: "採用", icon: "♙", question: "採用について教えてください" },
+    { label: "物販", icon: "⌂", question: "物販について教えてください" },
+    { label: "返金保証", icon: "◇", question: "返金保証について教えてください" },
+    { label: "就業規則", icon: "▤", question: "就業規則について教えてください" },
+  ];
+
   const defaultNextQuestions = ["HPB写真は何枚必要ですか？", "口コミ目標はありますか？", "広告費はいくらですか？", "契約まわりで確認することは？"];
 
   const categorySuggestions = {
-    "サービス・料金": ["回数券の有効期限を教えてください", "サブスクの繰越ルールを教えてください", "アイケアグラスの料金を教えてください", "返金保証の条件を教えてください"],
+    "サービス・料金": ["回数券の有効期限を教えてください", "回数券のアップグレード期限は？", "サブスクの繰越ルールを教えてください", "インビテーションチケットとは？"],
     "接客・施術": ["新規接客の流れを教えてください", "施術前の確認事項を教えてください", "眼病の施術可否を教えてください", "クレーム口コミの返信文を教えてください"],
-    "会計・システム": ["Squareの操作方法を教えてください", "返金対応の手順を教えてください", "領収書はどう発行しますか？", "HPBパスワード変更について教えてください"],
-    "店舗運営": ["キャンセル対応を教えてください", "店舗間移動について教えてください", "就業規則について教えてください", "スタッフのヘルプ費用を教えてください"],
+    "会計・システム": ["Squareの操作方法を教えてください", "返金対応の手順を教えてください", "領収書はどう発行しますか？", "日計や客報の修正依頼は？"],
+    "店舗運営": ["キャンセル対応を教えてください", "店舗間移動について教えてください", "日計や客報の修正依頼は？", "スタッフのヘルプ費用を教えてください"],
     HPB: ["HPBのクーポンはいくらまで出せますか？", "口コミ目標はありますか？", "HPB写真は何枚必要ですか？"],
     広告: ["広告の指標について教えてください", "広告費はいくらですか？", "CPAとは何ですか？"],
     研修: ["研修を欠席した場合はどうすればいいですか？", "入社前テストについて教えてください", "4日間研修後のテストについて教えてください"],
     契約: ["返金保証の条件を教えてください", "契約まわりで確認することは？", "無料施術をしてもいいですか？"],
     採用: ["入社前テストについて教えてください", "研修を欠席した場合はどうすればいいですか？", "スタッフのヘルプ費用を教えてください"],
-    物販: ["物販インセンティブについて教えてください", "アイケアグラスの料金を教えてください", "メモリックは子どもも飲めますか？"],
+    物販: ["物販インセンティブについて教えてください", "アイケアグラスの料金を教えてください", "メモリックは子どもも飲めますか？", "インセンティブ条件は？"],
     返金保証: ["返金保証の条件を教えてください", "視力変化が少ない場合は返金対象ですか？", "返金対象外になる条件は？"],
     就業規則: ["就業規則について教えてください", "お盆休みはどうなりますか？", "アニバーサリー休暇について教えてください"],
+    "集客・HPB": ["HPBのクーポンはいくらまで出せますか？", "HPBパスワード変更について教えてください", "HPBのレジ機能は使いますか？", "口コミ返信文を教えてください"],
   };
 
   const initialFaqs = [
     "回数券の有効期限を教えてください",
     "返金対応の手順を教えてください",
     "Squareの操作方法を教えてください",
+    "キャンセル対応を教えてください",
     "HPBクーポンはいくらまで設定できますか？",
+    "サブスクの繰越ルールを教えてください",
     "研修を欠席した場合はどうなりますか？",
     "広告の指標について教えてください",
   ];
@@ -731,13 +847,39 @@
         gap: 4px;
         min-height: 42px;
         margin: 2px auto 0;
+        border: 0;
+        background: transparent;
         color: var(--fc-line-dark);
         font-size: 15px;
         font-weight: 850;
         text-align: center;
         text-decoration: none;
+        cursor: pointer;
+      }
+      .fc-manual-expanded {
+        display: grid;
+        gap: 8px;
+        padding-top: 2px;
+        animation: fcFadeIn 0.18s ease-out both;
+      }
+      .fc-manual-expanded-title {
+        padding: 6px 2px 0;
+        color: var(--fc-muted);
+        font-size: 13px;
+        font-weight: 850;
+      }
+      .fc-manual-external {
+        display: inline-flex;
+        justify-content: center;
+        min-height: 40px;
+        align-items: center;
+        color: var(--fc-line-dark);
+        font-size: 14px;
+        font-weight: 850;
+        text-decoration: none;
       }
       .fc-manual-link:focus-visible,
+      .fc-manual-external:focus-visible,
       .fc-category-candidates button:focus-visible,
       .fc-bot-suggestion:focus-visible {
         outline: 3px solid rgba(14, 99, 246, 0.28);
@@ -1060,6 +1202,34 @@
         text-decoration: none;
         cursor: pointer;
       }
+      .fc-answer-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .fc-answer-actions button,
+      .fc-answer-actions a {
+        min-height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--fc-border);
+        border-radius: 999px;
+        background: #fff;
+        color: #475569;
+        padding: 0 12px;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 850;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .fc-answer-actions .is-primary {
+        border-color: rgba(14, 99, 246, 0.18);
+        background: #eef5ff;
+        color: var(--fc-line-dark);
+      }
       @media (max-width: 520px) {
         .fc-bot-button {
           right: calc(12px + env(safe-area-inset-right));
@@ -1238,6 +1408,80 @@
     trigger.insertAdjacentElement("afterend", candidates);
   }
 
+  function copyText(text, button) {
+    const done = () => {
+      const original = button.textContent;
+      button.textContent = "コピーしました";
+      window.setTimeout(() => {
+        button.textContent = original;
+      }, 1400);
+    };
+
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(() => {});
+      return;
+    }
+
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand("copy");
+      done();
+    } finally {
+      textarea.remove();
+    }
+  }
+
+  function formatAnswerForCopy(data) {
+    return [
+      data.title,
+      "",
+      "結論",
+      data.conclusion,
+      "",
+      "理由",
+      data.reason,
+      "",
+      "注意",
+      data.note,
+    ].join("\n");
+  }
+
+  function createManualSectionButton(item, container, ask) {
+    const suggestion = createElement("button", "fc-bot-suggestion");
+    suggestion.type = "button";
+    suggestion.setAttribute("aria-expanded", "false");
+    suggestion.innerHTML = `<span class="fc-bot-suggestion-icon">${item.icon}</span>${item.label}`;
+    suggestion.addEventListener("click", () => showCategoryCandidates(container, item.label, suggestion, ask));
+    return suggestion;
+  }
+
+  function toggleAllManualSections(container, button, ask) {
+    const existing = container.querySelector(".fc-manual-expanded");
+    if (existing) {
+      existing.remove();
+      button.textContent = "業務マニュアルをすべて見る⌄";
+      return;
+    }
+
+    const expanded = createElement("div", "fc-manual-expanded");
+    expanded.append(createElement("div", "fc-manual-expanded-title", "さらに探せる項目"));
+    extraManualSections.forEach((item) => {
+      expanded.appendChild(createManualSectionButton(item, container, ask));
+    });
+    const external = createElement("a", "fc-manual-external", "FCマニュアルサイトを開く ↗");
+    external.href = manualUrl;
+    external.target = "_blank";
+    external.rel = "noopener noreferrer";
+    expanded.appendChild(external);
+    button.insertAdjacentElement("beforebegin", expanded);
+    button.textContent = "閉じる⌃";
+  }
+
   function buildFaq(ask) {
     const faq = createElement("section", "fc-home-faq");
     faq.append(createElement("h2", "", "よく聞かれる質問"));
@@ -1281,6 +1525,21 @@
       details.append(createElement("p", "", data.detail));
       answerCard.appendChild(details);
     }
+    const actions = createElement("div", "fc-answer-actions");
+    const copy = createElement("button", "is-primary", "回答をコピー");
+    copy.type = "button";
+    copy.addEventListener("click", () => copyText(formatAnswerForCopy(data), copy));
+    const focusInput = createElement("button", "", "続けて質問");
+    focusInput.type = "button";
+    focusInput.addEventListener("click", () => {
+      document.querySelector(".fc-bot-input")?.focus();
+    });
+    const manual = createElement("a", "", "マニュアルを開く");
+    manual.href = manualUrl;
+    manual.target = "_blank";
+    manual.rel = "noopener noreferrer";
+    actions.append(copy, focusInput, manual);
+    answerCard.appendChild(actions);
     wrapper.appendChild(answerCard);
 
     const nextTitle = createElement("div", "fc-next-title", "次によくある質問");
@@ -1357,17 +1616,11 @@
     const messages = createElement("div", "fc-bot-messages");
     const suggestions = createElement("div", "fc-bot-suggestions");
     manualSections.forEach((item) => {
-      const suggestion = createElement("button", "fc-bot-suggestion");
-      suggestion.type = "button";
-      suggestion.setAttribute("aria-expanded", "false");
-      suggestion.innerHTML = `<span class="fc-bot-suggestion-icon">${item.icon}</span>${item.label}`;
-      suggestion.addEventListener("click", () => showCategoryCandidates(suggestions, item.label, suggestion, ask));
-      suggestions.appendChild(suggestion);
+      suggestions.appendChild(createManualSectionButton(item, suggestions, ask));
     });
-    const manualLink = createElement("a", "fc-manual-link", "業務マニュアルをすべて見る⌄");
-    manualLink.href = manualUrl;
-    manualLink.target = "_blank";
-    manualLink.rel = "noopener noreferrer";
+    const manualLink = createElement("button", "fc-manual-link", "業務マニュアルをすべて見る⌄");
+    manualLink.type = "button";
+    manualLink.addEventListener("click", () => toggleAllManualSections(suggestions, manualLink, ask));
     suggestions.appendChild(manualLink);
     const faq = buildFaq(ask);
 
