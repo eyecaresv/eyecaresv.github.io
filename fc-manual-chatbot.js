@@ -188,6 +188,142 @@
       answer:
         "メモリックは、小学高学年であれば大人と同じように飲んでもらって大丈夫です。低学年の場合は半分の量を推奨しています。",
     },
+    {
+      id: "ticket-expiration",
+      category: "サービス・料金",
+      title: "回数券の有効期限",
+      keywords: ["回数券", "有効期限", "期限", "30回", "16回", "8回", "4回", "3回", "インビテーションチケット"],
+      answer:
+        "回数券の有効期限は、30回券が12ヶ月、16回券が6ヶ月、8回券が4ヶ月、4回券が2ヶ月、3回券は1ヶ月です。有効期限内に使い切れなかった分は、条件によりインビテーションチケットとして救済できる場合があります。期限や例外対応は店舗判断で確定せず、必要に応じて本部へ確認してください。",
+      structured: {
+        title: "回数券の有効期限",
+        conclusion: "30回券は12ヶ月、16回券は6ヶ月、8回券は4ヶ月、4回券は2ヶ月、3回券は1ヶ月です。",
+        reason: "購入回数ごとに通い切れる期間が異なるため、有効期限も回数券ごとに設定されています。",
+        note: "期限切れ分は、条件によりインビテーションチケットとして救済できる場合があります。例外は本部へ確認してください。",
+        detail:
+          "回数券の有効期限は、30回券が12ヶ月、16回券が6ヶ月、8回券が4ヶ月、4回券が2ヶ月、3回券は1ヶ月です。有効期限内に使い切れなかった分は、条件によりインビテーションチケットとして救済できる場合があります。",
+        nextQuestions: ["回数券のアップグレード期限は？", "インビテーションチケットとは？", "サブスクの繰越ルールは？", "返金保証の条件は？"],
+      },
+    },
+    {
+      id: "subscription-carryover",
+      category: "サービス・料金",
+      title: "サブスクの繰越ルール",
+      keywords: ["サブスク", "繰越", "繰り越し", "翌月", "変更", "休止", "10日", "最低契約", "3ヶ月", "当日キャンセル"],
+      answer:
+        "サブスクの未消化分は翌月まで繰越可能です。翌々月以降への繰越はできません。プラン変更や休止は前月10日までの申請が基本で、それ以降は翌々月からの反映になります。当日キャンセルは1回分消化の扱いです。",
+      structured: {
+        title: "サブスクの繰越",
+        conclusion: "未消化分は翌月まで繰越可能です。",
+        reason: "サブスクは毎月の利用枠で運用するため、繰越は翌月までに限定されています。",
+        note: "翌々月以降への繰越はできません。プラン変更や休止は前月10日までの申請が基本です。",
+        detail:
+          "サブスクの未消化分は翌月まで繰越可能です。翌々月以降への繰越はできません。プラン変更や休止は前月10日までの申請が基本で、それ以降は翌々月からの反映になります。当日キャンセルは1回分消化の扱いです。",
+        nextQuestions: ["サブスクの領収書は？", "当日キャンセルはどう扱う？", "回数券の有効期限は？", "返金保証の条件は？"],
+      },
+    },
+    {
+      id: "new-customer-flow",
+      category: "接客・施術",
+      title: "新規接客の流れ",
+      keywords: ["新規", "接客", "流れ", "カウンセリング", "検査", "施術", "クロージング", "初回"],
+      answer:
+        "新規接客は、導入、カウンセリング、検査、施術・セミクロ、ケア・トレーニング、再検査、クロージングの流れで進めます。接客担当と施術担当の2名体制が基本です。説明が長くなりすぎないよう、お客様の悩みを確認しながら必要な内容を順番に案内してください。",
+      structured: {
+        title: "新規接客の流れ",
+        conclusion: "導入からクロージングまで、7ステップで進めます。",
+        reason: "最初に悩みを整理し、検査と施術後の変化を確認してから提案すると、お客様が納得しやすいためです。",
+        note: "説明だけが長くならないよう、お客様の悩みを確認しながら進めてください。",
+        detail:
+          "流れは、導入、カウンセリング、検査、施術・セミクロ、ケア・トレーニング、再検査、クロージングです。接客担当と施術担当の2名体制が基本です。",
+        nextQuestions: ["施術前の確認事項は？", "眼病の施術可否は？", "口コミ返信文を教えて", "クロージングで伝えることは？"],
+      },
+    },
+    {
+      id: "square-operation",
+      category: "会計・システム",
+      title: "Squareの操作",
+      keywords: ["Square", "スクエア", "操作", "決済", "会計", "サブスク登録", "返金", "レジ"],
+      answer:
+        "Squareは、通常決済、サブスク登録、返金対応などで使用します。まず処理内容が、通常会計、サブスク、返金のどれかを確認してください。金額ミスや返金漏れを防ぐため、返金やサブスク変更は本部ルールに沿って対応してください。",
+      structured: {
+        title: "Square操作",
+        conclusion: "通常決済、サブスク登録、返金対応で使います。",
+        reason: "処理内容によって操作手順が変わるため、最初に目的を分けるとミスが減ります。",
+        note: "返金やサブスク変更は金額ミスが起きやすいため、必ず本部ルールに沿って対応してください。",
+        detail:
+          "Squareは、通常決済、サブスク登録、返金対応などで使用します。まず処理内容が、通常会計、サブスク、返金のどれかを確認してください。判断に迷う場合は本部へ確認してください。",
+        nextQuestions: ["返金対応の手順は？", "サブスクの領収書は？", "サブスクの繰越ルールは？", "HPBのレジ機能は使う？"],
+      },
+    },
+    {
+      id: "refund-process",
+      category: "会計・システム",
+      title: "返金対応の手順",
+      keywords: ["返金対応", "返金手順", "返金", "手順", "誓約書", "Square", "スクエア", "全額返金"],
+      answer:
+        "返金対応は、条件確認、対象可否の判断、返金金額の確認、必要書類の確認、Squareなどでの処理、本部報告の順で進めます。全額返金保証は条件があるため、少しでも判断に迷う場合は店舗だけで確定せず、本部へ確認してください。",
+      structured: {
+        title: "返金対応",
+        conclusion: "条件確認から本部報告まで、順番に進めます。",
+        reason: "返金は金額・条件・記録が残る対応のため、流れを分けるとミスを防げます。",
+        note: "全額返金保証は対象条件があります。迷う場合は店舗だけで確定せず本部へ確認してください。",
+        detail:
+          "返金対応は、条件確認、対象可否の判断、返金金額の確認、必要書類の確認、Squareなどでの処理、本部報告の順で進めます。全額返金保証は、案内内容に取り組んだ上で変化が確認できなかった場合など、対象条件があります。",
+        nextQuestions: ["返金保証の条件は？", "Squareの操作方法は？", "領収書はどう発行する？", "回数券の有効期限は？"],
+      },
+    },
+    {
+      id: "store-cancellation",
+      category: "店舗運営",
+      title: "キャンセル対応",
+      keywords: ["キャンセル", "当日キャンセル", "予約変更", "変更", "店舗運営", "消化", "1回分"],
+      answer:
+        "当日キャンセルは、基本的に1回分消化の扱いです。予約変更やキャンセルの案内は、店舗ルールをお客様にわかりやすく伝え、例外対応が必要な場合は本部確認を行ってください。体調不良など判断が必要なケースは、記録を残して対応するのが安全です。",
+      structured: {
+        title: "キャンセル対応",
+        conclusion: "当日キャンセルは、基本的に1回分消化です。",
+        reason: "予約枠を確保しているため、直前キャンセルは店舗運営への影響が大きいためです。",
+        note: "体調不良など例外判断が必要な場合は、記録を残して本部へ確認してください。",
+        detail:
+          "当日キャンセルは、基本的に1回分消化の扱いです。予約変更やキャンセルの案内は、店舗ルールをお客様にわかりやすく伝え、例外対応が必要な場合は本部確認を行ってください。",
+        nextQuestions: ["サブスクの繰越ルールは？", "返金対応の手順は？", "就業規則について", "ヘルプ費用は？"],
+      },
+    },
+    {
+      id: "pre-treatment-check",
+      category: "接客・施術",
+      title: "施術前の確認事項",
+      keywords: ["施術前", "確認事項", "確認", "体調", "眼病", "コンタクト", "禁忌", "施術可否"],
+      answer:
+        "施術前は、体調、目の状態、眼病の有無、コンタクト使用、違和感や痛みがないかを確認してください。施術可否の判断が難しい場合は、無理に進めず本部またはマニュアルで確認するのが安全です。お客様に不安がある場合は、説明を急がず状態を聞き取ってください。",
+      structured: {
+        title: "施術前の確認事項",
+        conclusion: "体調、目の状態、眼病の有無、コンタクト使用を確認します。",
+        reason: "施術前に状態を確認することで、トラブルや不安のある施術を防げます。",
+        note: "施術可否の判断が難しい場合は、無理に進めず本部へ確認してください。",
+        detail:
+          "施術前は、体調、目の状態、眼病の有無、コンタクト使用、違和感や痛みがないかを確認してください。お客様に不安がある場合は、説明を急がず状態を聞き取ってください。",
+        nextQuestions: ["眼病の施術可否は？", "新規接客の流れは？", "口コミ返信文を教えて", "返金保証の条件は？"],
+      },
+    },
+    {
+      id: "store-transfer",
+      category: "店舗運営",
+      title: "店舗間移動",
+      keywords: ["店舗間移動", "店舗移動", "別店舗", "他店舗", "移動", "購入店舗", "インビテーションチケット"],
+      answer:
+        "店舗間移動は、購入店舗や契約内容によって対応可否が変わります。インビテーションチケットは購入店舗のみで利用する運用です。回数券やサブスクの利用店舗を変更したい場合は、店舗だけで判断せず、本部へ確認してください。",
+      structured: {
+        title: "店舗間移動",
+        conclusion: "購入店舗や契約内容によって対応可否が変わります。",
+        reason: "回数券、サブスク、チケットで利用条件が異なるためです。",
+        note: "インビテーションチケットは購入店舗のみで利用する運用です。迷う場合は本部確認してください。",
+        detail:
+          "店舗間移動は、購入店舗や契約内容によって対応可否が変わります。回数券やサブスクの利用店舗を変更したい場合は、店舗だけで判断せず、本部へ確認してください。",
+        nextQuestions: ["回数券の有効期限は？", "サブスクの繰越ルールは？", "キャンセル対応は？", "返金対応の手順は？"],
+      },
+    },
   ];
 
   const manualSections = [
@@ -200,6 +336,10 @@
   const defaultNextQuestions = ["HPB写真は何枚必要ですか？", "口コミ目標はありますか？", "広告費はいくらですか？", "契約まわりで確認することは？"];
 
   const categorySuggestions = {
+    "サービス・料金": ["回数券の有効期限を教えてください", "サブスクの繰越ルールを教えてください", "アイケアグラスの料金を教えてください", "返金保証の条件を教えてください"],
+    "接客・施術": ["新規接客の流れを教えてください", "施術前の確認事項を教えてください", "眼病の施術可否を教えてください", "クレーム口コミの返信文を教えてください"],
+    "会計・システム": ["Squareの操作方法を教えてください", "返金対応の手順を教えてください", "領収書はどう発行しますか？", "HPBパスワード変更について教えてください"],
+    "店舗運営": ["キャンセル対応を教えてください", "店舗間移動について教えてください", "就業規則について教えてください", "スタッフのヘルプ費用を教えてください"],
     HPB: ["HPBのクーポンはいくらまで出せますか？", "口コミ目標はありますか？", "HPB写真は何枚必要ですか？"],
     広告: ["広告の指標について教えてください", "広告費はいくらですか？", "CPAとは何ですか？"],
     研修: ["研修を欠席した場合はどうすればいいですか？", "入社前テストについて教えてください", "4日間研修後のテストについて教えてください"],
@@ -529,15 +669,6 @@
         line-height: 1.8;
         font-weight: 900;
       }
-      .fc-bot-suggestions::after {
-        content: "業務マニュアルをすべて見る⌄";
-        display: block;
-        padding-top: 12px;
-        color: var(--fc-line-dark);
-        font-size: 15px;
-        font-weight: 850;
-        text-align: center;
-      }
       .fc-bot-suggestions.is-hidden {
         display: none;
       }
@@ -580,6 +711,37 @@
         color: #4b5563;
         font-size: 28px;
         font-weight: 400;
+      }
+      .fc-bot-suggestion[aria-expanded="true"] {
+        border-color: #0e63f6;
+        background: #f8fbff;
+        box-shadow: 0 0 0 2px rgba(14, 99, 246, 0.12), 0 10px 24px rgba(48, 92, 154, 0.08);
+      }
+      .fc-bot-suggestion[aria-expanded="true"]::after {
+        content: "⌄";
+        right: 19px;
+        color: #0e63f6;
+        font-size: 18px;
+        font-weight: 900;
+      }
+      .fc-manual-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        min-height: 42px;
+        margin: 2px auto 0;
+        color: var(--fc-line-dark);
+        font-size: 15px;
+        font-weight: 850;
+        text-align: center;
+        text-decoration: none;
+      }
+      .fc-manual-link:focus-visible,
+      .fc-category-candidates button:focus-visible,
+      .fc-bot-suggestion:focus-visible {
+        outline: 3px solid rgba(14, 99, 246, 0.28);
+        outline-offset: 3px;
       }
       .fc-home-faq {
         order: 3;
@@ -663,20 +825,31 @@
         width: 100%;
         display: grid;
         gap: 8px;
-        padding: 3px 0 0;
+        padding: 0 0 8px;
+        animation: fcFadeIn 0.18s ease-out both;
       }
       .fc-category-candidates button {
-        min-height: 42px;
+        min-height: 48px;
         border: 1px solid var(--fc-border);
         border-radius: 14px;
-        background: #fff;
-        color: var(--fc-line-dark);
+        background: #f8fbff;
+        color: var(--fc-ink);
         font: inherit;
         font-size: 14px;
         font-weight: 800;
         text-align: left;
-        padding: 0 14px;
+        padding: 0 38px 0 14px;
         cursor: pointer;
+        position: relative;
+      }
+      .fc-category-candidates button::after {
+        content: "›";
+        position: absolute;
+        right: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #0e63f6;
+        font-size: 22px;
       }
       .fc-thinking {
         display: inline-flex;
@@ -701,6 +874,10 @@
       @keyframes fcPulse {
         0%, 100% { opacity: 0.35; transform: translateY(0); }
         50% { opacity: 1; transform: translateY(-3px); }
+      }
+      @keyframes fcFadeIn {
+        from { opacity: 0; transform: translateY(-4px); }
+        to { opacity: 1; transform: translateY(0); }
       }
       .fc-bot-form {
         order: 1;
@@ -1042,9 +1219,12 @@
     };
   }
 
-  function showCategoryCandidates(container, label, ask) {
+  function showCategoryCandidates(container, label, trigger, ask) {
     const questions = categorySuggestions[label] || [];
+    const wasOpen = trigger.getAttribute("aria-expanded") === "true";
     container.querySelectorAll(".fc-category-candidates").forEach((node) => node.remove());
+    container.querySelectorAll(".fc-bot-suggestion").forEach((node) => node.setAttribute("aria-expanded", "false"));
+    if (wasOpen) return;
     if (!questions.length) return;
 
     const candidates = createElement("div", "fc-category-candidates");
@@ -1054,7 +1234,8 @@
       button.addEventListener("click", () => ask(question));
       candidates.appendChild(button);
     });
-    container.appendChild(candidates);
+    trigger.setAttribute("aria-expanded", "true");
+    trigger.insertAdjacentElement("afterend", candidates);
   }
 
   function buildFaq(ask) {
@@ -1178,10 +1359,16 @@
     manualSections.forEach((item) => {
       const suggestion = createElement("button", "fc-bot-suggestion");
       suggestion.type = "button";
+      suggestion.setAttribute("aria-expanded", "false");
       suggestion.innerHTML = `<span class="fc-bot-suggestion-icon">${item.icon}</span>${item.label}`;
-      suggestion.addEventListener("click", () => showCategoryCandidates(suggestions, item.label, ask));
+      suggestion.addEventListener("click", () => showCategoryCandidates(suggestions, item.label, suggestion, ask));
       suggestions.appendChild(suggestion);
     });
+    const manualLink = createElement("a", "fc-manual-link", "業務マニュアルをすべて見る⌄");
+    manualLink.href = manualUrl;
+    manualLink.target = "_blank";
+    manualLink.rel = "noopener noreferrer";
+    suggestions.appendChild(manualLink);
     const faq = buildFaq(ask);
 
     const form = createElement("form", "fc-bot-form");
