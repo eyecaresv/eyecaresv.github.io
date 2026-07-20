@@ -191,15 +191,37 @@
   ];
 
   const popularQuestions = [
-    { label: "HPB", question: "HPBのクーポンはいくらまで出せますか？" },
-    { label: "広告", question: "広告の指標について教えてください" },
-    { label: "研修", question: "研修を欠席した場合はどうすればいいですか？" },
-    { label: "契約", question: "返金保証の条件を教えてください" },
-    { label: "採用", question: "入社前テストについて教えてください" },
-    { label: "物販", question: "物販インセンティブについて教えてください" },
+    { label: "HPB", icon: "▱", question: "HPBのクーポンはいくらまで出せますか？" },
+    { label: "広告", icon: "▥", question: "広告の指標について教えてください" },
+    { label: "研修", icon: "▵", question: "研修を欠席した場合はどうすればいいですか？" },
+    { label: "契約", icon: "▤", question: "契約まわりで確認することは？" },
+    { label: "採用", icon: "♙", question: "入社前テストについて教えてください" },
+    { label: "物販", icon: "▢", question: "物販インセンティブについて教えてください" },
+    { label: "返金保証", icon: "◇", question: "返金保証の条件を教えてください" },
+    { label: "就業規則", icon: "▣", question: "就業規則について教えてください" },
   ];
 
   const defaultNextQuestions = ["HPB写真は何枚必要ですか？", "口コミ目標はありますか？", "広告費はいくらですか？", "契約まわりで確認することは？"];
+
+  const categorySuggestions = {
+    HPB: ["HPBのクーポンはいくらまで出せますか？", "口コミ目標はありますか？", "HPB写真は何枚必要ですか？"],
+    広告: ["広告の指標について教えてください", "広告費はいくらですか？", "CPAとは何ですか？"],
+    研修: ["研修を欠席した場合はどうすればいいですか？", "入社前テストについて教えてください", "4日間研修後のテストについて教えてください"],
+    契約: ["返金保証の条件を教えてください", "契約まわりで確認することは？", "無料施術をしてもいいですか？"],
+    採用: ["入社前テストについて教えてください", "研修を欠席した場合はどうすればいいですか？", "スタッフのヘルプ費用を教えてください"],
+    物販: ["物販インセンティブについて教えてください", "アイケアグラスの料金を教えてください", "メモリックは子どもも飲めますか？"],
+    返金保証: ["返金保証の条件を教えてください", "視力変化が少ない場合は返金対象ですか？", "返金対象外になる条件は？"],
+    就業規則: ["就業規則について教えてください", "お盆休みはどうなりますか？", "アニバーサリー休暇について教えてください"],
+  };
+
+  const initialFaqs = [
+    "HPBクーポンはいくらまで設定できますか？",
+    "返金保証の条件を教えてください",
+    "研修を欠席した場合はどうなりますか？",
+    "広告の指標について教えてください",
+    "物販インセンティブについて教えてください",
+    "就業規則について教えてください",
+  ];
 
   const stopWords = new Set(["です", "ます", "する", "した", "して", "について", "ください", "教えて", "場合", "どう", "とは"]);
 
@@ -348,12 +370,15 @@
         min-height: 0;
         max-width: none;
         margin: 0 auto;
-        display: grid;
-        grid-template-rows: minmax(0, 1fr) auto auto;
+        display: flex;
+        flex-direction: column;
         border: 0;
         border-radius: 0;
         background: transparent;
         box-shadow: none;
+      }
+      .fc-bot-root.has-chat .fc-bot-panel {
+        min-height: 0;
       }
       .fc-bot-header {
         display: flex;
@@ -423,10 +448,17 @@
         cursor: pointer;
       }
       .fc-bot-messages {
+        order: 4;
+        display: none;
+        flex: 1 1 auto;
         min-height: 0;
         overflow-y: auto;
         padding: 7px 9px 16px;
         background: transparent;
+      }
+      .fc-bot-root.has-chat .fc-bot-messages {
+        order: 1;
+        display: block;
       }
       .fc-bot-message {
         max-width: 100%;
@@ -482,13 +514,26 @@
         text-decoration: underline;
       }
       .fc-bot-suggestions {
+        order: 2;
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
-        padding: 0 19px 14px;
+        gap: 12px;
+        padding: 10px 19px 18px;
         background: transparent;
       }
+      .fc-bot-suggestions::before {
+        content: "カテゴリから探す";
+        width: 100%;
+        display: block;
+        margin: 8px 0 2px;
+        color: var(--fc-ink);
+        font-size: 18px;
+        font-weight: 900;
+      }
       .fc-bot-suggestions.is-hidden {
+        display: none;
+      }
+      .fc-bot-root.has-chat .fc-bot-suggestions {
         display: none;
       }
       .fc-bot-suggestions::-webkit-scrollbar {
@@ -496,12 +541,12 @@
       }
       .fc-bot-suggestion {
         border: 1px solid var(--fc-border);
-        border-radius: 999px;
+        border-radius: 16px;
         background: rgba(255, 255, 255, 0.92);
         color: var(--fc-ink);
-        min-height: 42px;
+        min-height: 58px;
         width: calc(50% - 4px);
-        padding: 0 10px;
+        padding: 0 12px;
         font: inherit;
         font-size: 15px;
         font-weight: 800;
@@ -509,24 +554,162 @@
         cursor: pointer;
         box-shadow: 0 10px 24px rgba(48, 92, 154, 0.08);
       }
+      .fc-bot-suggestion-icon {
+        margin-right: 7px;
+        color: var(--fc-line-dark);
+        font-size: 18px;
+      }
+      .fc-home-faq {
+        order: 3;
+        margin: 6px 19px 20px;
+        padding: 18px 16px 14px;
+        border-radius: 20px;
+        background: #fff;
+        box-shadow: 0 14px 34px rgba(48, 92, 154, 0.08);
+      }
+      .fc-bot-root.has-chat .fc-home-faq {
+        display: none;
+      }
+      .fc-home-faq h2 {
+        margin: 0 0 12px;
+        color: var(--fc-ink);
+        font-size: 18px;
+        line-height: 1.4;
+      }
+      .fc-home-faq-list {
+        display: grid;
+      }
+      .fc-home-faq button {
+        min-height: 50px;
+        border: 0;
+        border-top: 1px solid #e2e8f0;
+        background: transparent;
+        color: var(--fc-ink);
+        padding: 0;
+        font: inherit;
+        font-size: 15px;
+        text-align: left;
+        cursor: pointer;
+      }
+      .fc-home-faq button::after {
+        content: "›";
+        float: right;
+        color: #64748b;
+        font-size: 28px;
+        line-height: 1;
+      }
+      .fc-home-more {
+        color: var(--fc-line-dark) !important;
+        font-weight: 900;
+      }
+      .fc-home-note {
+        order: 5;
+        margin: 0 19px 18px;
+        padding: 18px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #e8f3ff 0%, #ddebff 100%);
+        color: #1449a6;
+        line-height: 1.7;
+        font-weight: 700;
+      }
+      .fc-bot-root.has-chat .fc-home-note {
+        display: none;
+      }
+      .fc-category-candidates {
+        width: 100%;
+        display: grid;
+        gap: 8px;
+        padding: 3px 0 0;
+      }
+      .fc-category-candidates button {
+        min-height: 42px;
+        border: 1px solid var(--fc-border);
+        border-radius: 14px;
+        background: #fff;
+        color: var(--fc-line-dark);
+        font: inherit;
+        font-size: 14px;
+        font-weight: 800;
+        text-align: left;
+        padding: 0 14px;
+        cursor: pointer;
+      }
+      .fc-thinking {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        color: var(--fc-muted);
+        font-weight: 800;
+      }
+      .fc-thinking-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--fc-line);
+        animation: fcPulse 1s ease-in-out infinite;
+      }
+      .fc-thinking-dot:nth-child(2) {
+        animation-delay: 0.15s;
+      }
+      .fc-thinking-dot:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      @keyframes fcPulse {
+        0%, 100% { opacity: 0.35; transform: translateY(0); }
+        50% { opacity: 1; transform: translateY(-3px); }
+      }
       .fc-bot-form {
-        position: sticky;
-        bottom: 0;
+        order: 1;
+        margin: 0 0 8px;
         display: grid;
         grid-template-columns: 1fr 54px 74px;
         gap: 9px;
+        padding: 28px 19px 20px;
+        border-radius: 0 0 24px 24px;
+        background: #fff;
+        box-shadow: 0 18px 42px rgba(48, 92, 154, 0.08);
+      }
+      .fc-bot-root.has-chat .fc-bot-form {
+        order: 2;
+        position: sticky;
+        bottom: 0;
+        margin: 0;
         padding: 10px 15px max(14px, env(safe-area-inset-bottom));
-        background: transparent;
+        border-radius: 0;
+        background: rgba(244, 248, 255, 0.94);
+        backdrop-filter: blur(12px);
+      }
+      .fc-bot-form::before {
+        content: "何についてお困りですか？";
+        grid-column: 1 / -1;
+        margin-bottom: 10px;
+        color: var(--fc-ink);
+        font-size: 18px;
+        font-weight: 900;
+      }
+      .fc-bot-root.has-chat .fc-bot-form::before {
+        content: none;
+      }
+      .fc-bot-form::after {
+        content: "例：HPBクーポンはいくらまで設定できますか？";
+        grid-column: 1 / -1;
+        color: #8a96aa;
+        font-size: 14px;
+        font-weight: 700;
+        padding: 4px 0 0 8px;
+      }
+      .fc-bot-root.has-chat .fc-bot-form::after {
+        content: none;
       }
       .fc-bot-input {
         min-width: 0;
-        height: 64px;
+        height: 58px;
         border: 1px solid var(--fc-border);
-        border-radius: 24px;
+        border-radius: 20px;
         background: rgba(255, 255, 255, 0.95);
-        padding: 0 22px;
+        padding: 0 18px;
         font: inherit;
-        font-size: 17px;
+        font-size: 16px;
         color: var(--fc-ink);
         outline: none;
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
@@ -537,7 +720,7 @@
       .fc-bot-submit {
         min-width: 0;
         border: 0;
-        border-radius: 24px;
+        border-radius: 20px;
         background: linear-gradient(135deg, #3f8df4 0%, #0867df 100%);
         color: #fff;
         font: inherit;
@@ -555,28 +738,29 @@
         font: inherit;
         font-size: 19px;
         cursor: pointer;
+        box-shadow: 0 10px 22px rgba(48, 92, 154, 0.08);
       }
       .fc-answer {
         display: grid;
         gap: 0;
       }
       .fc-answer-card {
-        padding: 20px 17px 18px;
+        padding: 18px 17px;
         border-radius: 24px;
         background: #fff;
         box-shadow: 0 16px 36px rgba(48, 92, 154, 0.1);
       }
       .fc-answer-title {
-        margin: 0 0 18px;
+        margin: 0 0 14px;
         color: var(--fc-ink);
-        font-size: 24px;
+        font-size: 21px;
         line-height: 1.45;
         font-weight: 900;
       }
       .fc-answer-block {
         display: grid;
-        gap: 9px;
-        padding: 16px 0 18px;
+        gap: 7px;
+        padding: 13px 0 15px;
         border-top: 1px solid #d7dfec;
       }
       .fc-answer-title + .fc-answer-block {
@@ -585,12 +769,12 @@
       }
       .fc-answer-label {
         color: var(--fc-line-dark);
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 900;
       }
       .fc-answer-value {
         color: var(--fc-ink);
-        font-size: 17px;
+        font-size: 16px;
         font-weight: 500;
         line-height: 1.75;
         white-space: pre-line;
@@ -615,7 +799,7 @@
         white-space: pre-line;
       }
       .fc-next-title {
-        margin: 24px 0 10px;
+        margin: 18px 0 10px;
         color: var(--fc-muted);
         font-size: 18px;
         font-weight: 900;
@@ -624,7 +808,7 @@
         margin-bottom: 18px;
         padding: 13px 18px;
         display: grid;
-        gap: 10px;
+        gap: 8px;
         border-radius: 19px;
         background: #fff;
         box-shadow: 0 12px 28px rgba(48, 92, 154, 0.08);
@@ -709,12 +893,12 @@
           padding: 7px 9px 14px;
         }
         .fc-bot-inline .fc-bot-suggestions {
-          padding: 0 19px 14px;
+          padding: 8px 19px 18px;
         }
         .fc-bot-inline .fc-bot-suggestion {
-          min-height: 41px;
+          min-height: 56px;
           padding: 0 10px;
-          border-radius: 999px;
+          border-radius: 16px;
           font-size: 15px;
         }
         .fc-bot-inline .fc-bot-title strong {
@@ -817,12 +1001,55 @@
 
     return {
       title: content.title || content.category || "回答",
-      conclusion: first.replace(/^結論、/, ""),
-      reason: second,
-      note: caution,
+      conclusion: first.replace(/^結論、/, "").replace(/。$/, ""),
+      reason: second.replace(/。$/, ""),
+      note: caution.replace(/。$/, ""),
       detail: answer,
       nextQuestions: content.nextQuestions || defaultNextQuestions,
     };
+  }
+
+  function showCategoryCandidates(container, label, ask) {
+    const questions = categorySuggestions[label] || [];
+    container.querySelectorAll(".fc-category-candidates").forEach((node) => node.remove());
+    if (!questions.length) return;
+
+    const candidates = createElement("div", "fc-category-candidates");
+    questions.forEach((question) => {
+      const button = createElement("button", "", question);
+      button.type = "button";
+      button.addEventListener("click", () => ask(question));
+      candidates.appendChild(button);
+    });
+    container.appendChild(candidates);
+  }
+
+  function buildFaq(ask) {
+    const faq = createElement("section", "fc-home-faq");
+    faq.append(createElement("h2", "", "よく聞かれる質問"));
+    const list = createElement("div", "fc-home-faq-list");
+    initialFaqs.slice(0, 3).forEach((question) => {
+      const button = createElement("button", "", question);
+      button.type = "button";
+      button.addEventListener("click", () => ask(question));
+      list.appendChild(button);
+    });
+    const more = createElement("button", "fc-home-more", "すべて見る");
+    more.type = "button";
+    more.addEventListener("click", () => {
+      const showingAll = more.dataset.open === "true";
+      list.innerHTML = "";
+      initialFaqs.slice(0, showingAll ? 3 : initialFaqs.length).forEach((question) => {
+        const button = createElement("button", "", question);
+        button.type = "button";
+        button.addEventListener("click", () => ask(question));
+        list.appendChild(button);
+      });
+      more.dataset.open = String(!showingAll);
+      more.textContent = showingAll ? "すべて見る" : "閉じる";
+    });
+    faq.append(list, more);
+    return faq;
   }
 
   function appendStructuredAnswer(message, content, ask) {
@@ -888,6 +1115,7 @@
 
     messagesNode.appendChild(message);
     messagesNode.scrollTop = messagesNode.scrollHeight;
+    return message;
   }
 
   function initChatbot() {
@@ -915,16 +1143,19 @@
     const messages = createElement("div", "fc-bot-messages");
     const suggestions = createElement("div", "fc-bot-suggestions");
     popularQuestions.forEach((item) => {
-      const suggestion = createElement("button", "fc-bot-suggestion", item.label);
+      const suggestion = createElement("button", "fc-bot-suggestion");
       suggestion.type = "button";
-      suggestion.addEventListener("click", () => ask(item.question));
+      suggestion.innerHTML = `<span class="fc-bot-suggestion-icon">${item.icon}</span>${item.label}`;
+      suggestion.addEventListener("click", () => showCategoryCandidates(suggestions, item.label, ask));
       suggestions.appendChild(suggestion);
     });
+    const faq = buildFaq(ask);
+    const homeNote = createElement("div", "fc-home-note", "すぐに解決したいことをAIがサポートします。マニュアルや規則、よくある質問から最適な回答をご案内します。");
 
     const form = createElement("form", "fc-bot-form");
     const input = createElement("input", "fc-bot-input");
     input.type = "text";
-    input.placeholder = "質問を入力...";
+    input.placeholder = "質問を入力してください";
     input.autocomplete = "off";
     const voice = createElement("button", "fc-bot-voice", "🎤");
     voice.type = "button";
@@ -933,7 +1164,7 @@
     submit.type = "submit";
     form.append(input, voice, submit);
 
-    panel.append(header, messages, suggestions, form);
+    panel.append(header, form, suggestions, faq, homeNote, messages);
     root.append(button, panel);
     (mountNode || document.body).appendChild(root);
 
@@ -948,14 +1179,19 @@
       const trimmed = question.trim();
       if (!trimmed) return;
       setOpen(true);
+      root.classList.add("has-chat");
       appendMessage(messages, "user", trimmed, ask);
-      const result = buildAnswer(trimmed);
-      appendMessage(messages, "bot", {
-        ...result.entry,
-        related: result.related,
-        nextQuestions: result.nextQuestions,
-      }, ask);
-      suggestions.classList.add("is-hidden");
+      const thinking = appendMessage(messages, "bot", "AIが考えています", ask);
+      thinking.innerHTML = '<span class="fc-thinking">AIが考えています<span class="fc-thinking-dot"></span><span class="fc-thinking-dot"></span><span class="fc-thinking-dot"></span></span>';
+      window.setTimeout(() => {
+        const result = buildAnswer(trimmed);
+        thinking.remove();
+        appendMessage(messages, "bot", {
+          ...result.entry,
+          related: result.related,
+          nextQuestions: result.nextQuestions,
+        }, ask);
+      }, 450);
       input.value = "";
     }
 
@@ -975,12 +1211,6 @@
       input.placeholder = "音声入力は端末のマイクボタンから入力できます";
     });
 
-    appendMessage(messages, "bot", {
-      category: "使い方",
-      title: "アイケアLaBo FC AI",
-      answer:
-        "FC運営について何でも質問してください。HPB、返金保証、開業準備、広告、備品、研修など、聞きたい内容を入力すると近い回答を返します。",
-    }, ask);
   }
 
   if (document.readyState === "loading") {
