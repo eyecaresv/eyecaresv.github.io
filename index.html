@@ -27,7 +27,9 @@
 
       body {
         margin: 0;
-        background: #f5f8ff;
+        background:
+          radial-gradient(circle at top, rgba(91, 143, 229, 0.08), transparent 34%),
+          #f6f9ff;
         color: var(--ink);
         font-family:
           -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", "YuGothic",
@@ -47,50 +49,39 @@
         display: grid;
         grid-template-rows: auto minmax(0, 1fr) auto;
         overflow: hidden;
-        background: #f5f8ff;
-        box-shadow: 0 24px 80px rgba(41, 84, 147, 0.18);
+        background: #f4f8ff;
+        box-shadow: 0 28px 90px rgba(41, 84, 147, 0.18);
       }
 
       .topbar {
-        min-height: 148px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        padding: max(28px, env(safe-area-inset-top)) 18px 28px;
-        border-bottom: 1px solid #dfe8f4;
-        background: #fff;
+        min-height: 108px;
+        display: grid;
+        align-content: center;
+        gap: 12px;
+        padding: max(25px, env(safe-area-inset-top)) 22px 24px;
+        background: linear-gradient(135deg, #3e8df4 0%, #0562da 100%);
+        color: #fff;
       }
 
-      .brand-logo {
-        width: min(218px, 52vw);
-        height: auto;
-        display: block;
+      .topbar h1 {
+        margin: 0;
+        font-size: 27px;
+        line-height: 1.15;
+        font-weight: 900;
+        letter-spacing: 0;
       }
 
-      .manual-link {
-        min-height: 48px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        flex: 0 0 auto;
-        border: 1.5px solid #bfd1f2;
-        border-radius: 999px;
-        background: #fff;
-        color: var(--blue);
-        padding: 0 17px;
-        text-decoration: none;
-        font-size: 14px;
-        font-weight: 800;
-        box-shadow: 0 10px 24px rgba(79, 125, 198, 0.08);
-        white-space: nowrap;
+      .topbar p {
+        margin: 0;
+        font-size: 16px;
+        line-height: 1.5;
+        font-weight: 500;
       }
 
       .chat-zone {
         min-height: 0;
         display: grid;
-        padding: 34px 18px 0;
+        padding: 12px 9px 0;
       }
 
       #fc-chatbot-mount {
@@ -98,7 +89,7 @@
       }
 
       .support-note {
-        display: flex;
+        display: none;
         align-items: center;
         justify-content: center;
         gap: 8px;
@@ -121,18 +112,12 @@
 
       @media (max-width: 460px) {
         .topbar {
-          min-height: 116px;
-          padding: max(22px, env(safe-area-inset-top)) 16px 20px;
-        }
-
-        .manual-link {
-          min-height: 43px;
-          padding: 0 13px;
-          font-size: 12px;
+          min-height: 105px;
+          padding: max(23px, env(safe-area-inset-top)) 22px 22px;
         }
 
         .chat-zone {
-          padding: 30px 16px 0;
+          padding: 12px 9px 0;
         }
       }
     </style>
@@ -140,10 +125,8 @@
   <body>
     <main class="app" aria-label="EyeCare SV質問bot">
       <header class="topbar">
-        <img class="brand-logo" src="/eyecare-logo.png" alt="眼の整体院 アイケアLaBo" />
-        <a class="manual-link" href="https://eyecarelabo-fc-manual.netlify.app/" target="_blank" rel="noopener noreferrer">
-          📖 マニュアルを見る
-        </a>
+        <h1>アイケアLaBo FC AI</h1>
+        <p>FC運営について何でも質問してください</p>
       </header>
 
       <section class="chat-zone" aria-label="FC質問bot">

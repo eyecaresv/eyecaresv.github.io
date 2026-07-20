@@ -280,7 +280,7 @@
         --fc-soft: #eef5ff;
         --fc-card: #ffffff;
         --fc-border: #d8e5f6;
-        --fc-shadow: 0 18px 48px rgba(48, 92, 154, 0.18);
+        --fc-shadow: 0 18px 48px rgba(48, 92, 154, 0.12);
         color: var(--fc-ink);
         font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", "YuGothic", "Noto Sans JP", "Segoe UI", sans-serif;
       }
@@ -349,7 +349,7 @@
         max-width: none;
         margin: 0 auto;
         display: grid;
-        grid-template-rows: auto minmax(0, 1fr) auto;
+        grid-template-rows: minmax(0, 1fr) auto auto;
         border: 0;
         border-radius: 0;
         background: transparent;
@@ -364,12 +364,7 @@
         background: var(--fc-card);
       }
       .fc-bot-inline .fc-bot-header {
-        border-bottom: 0;
-        background: linear-gradient(135deg, #5f93e6 0%, #4f7fd5 100%);
-        color: #fff;
-        border-radius: 24px 24px 0 0;
-        min-height: 80px;
-        margin-left: 72px;
+        display: none;
       }
       .fc-bot-avatar {
         width: 40px;
@@ -430,50 +425,44 @@
       .fc-bot-messages {
         min-height: 0;
         overflow-y: auto;
-        padding: 0 0 18px 72px;
+        padding: 7px 9px 16px;
         background: transparent;
       }
       .fc-bot-message {
-        max-width: 88%;
+        max-width: 100%;
         margin: 0 0 10px;
-        padding: 15px 17px;
-        border-radius: 20px;
+        padding: 16px;
+        border-radius: 24px;
         background: #fff;
-        box-shadow: 0 10px 30px rgba(48, 92, 154, 0.1);
+        box-shadow: 0 16px 36px rgba(48, 92, 154, 0.1);
         font-size: 14px;
-        line-height: 1.85;
+        line-height: 1.75;
         white-space: pre-wrap;
       }
       .fc-bot-message.user {
         margin-left: auto;
-        border-bottom-right-radius: 4px;
-        background: #8de055;
+        max-width: 86%;
+        border-bottom-right-radius: 8px;
+        background: linear-gradient(135deg, #4e92f3 0%, #0967df 100%);
+        color: #fff;
       }
       .fc-bot-inline .fc-bot-message {
-        max-width: 100%;
         font-size: 16px;
       }
       .fc-bot-inline .fc-bot-message.user {
-        background: var(--fc-line);
+        background: linear-gradient(135deg, #4e92f3 0%, #0967df 100%);
         color: #fff;
-        border-radius: 18px 18px 4px 18px;
+        border-radius: 22px 22px 8px 22px;
       }
       .fc-bot-message.bot {
         position: relative;
+        padding: 0;
+        background: transparent;
+        box-shadow: none;
         border-radius: 24px;
       }
       .fc-bot-message.bot::before {
-        content: "🤖";
-        position: absolute;
-        left: -42px;
-        top: 10px;
-        width: 30px;
-        height: 30px;
-        display: grid;
-        place-items: center;
-        border-radius: 50%;
-        background: #fff;
-        box-shadow: 0 8px 20px rgba(48, 92, 154, 0.12);
+        content: none;
       }
       .fc-bot-message small {
         display: block;
@@ -495,8 +484,8 @@
       .fc-bot-suggestions {
         display: flex;
         flex-wrap: wrap;
-        gap: 9px;
-        padding: 0 0 18px 72px;
+        gap: 8px;
+        padding: 0 19px 14px;
         background: transparent;
       }
       .fc-bot-suggestions.is-hidden {
@@ -510,11 +499,11 @@
         border-radius: 999px;
         background: rgba(255, 255, 255, 0.92);
         color: var(--fc-ink);
-        min-height: 38px;
-        width: auto;
-        padding: 0 15px;
+        min-height: 42px;
+        width: calc(50% - 4px);
+        padding: 0 10px;
         font: inherit;
-        font-size: 14px;
+        font-size: 15px;
         font-weight: 800;
         text-align: center;
         cursor: pointer;
@@ -524,17 +513,17 @@
         position: sticky;
         bottom: 0;
         display: grid;
-        grid-template-columns: 1fr 46px 92px;
+        grid-template-columns: 1fr 54px 74px;
         gap: 9px;
-        padding: 0 0 env(safe-area-inset-bottom);
+        padding: 10px 15px max(14px, env(safe-area-inset-bottom));
         background: transparent;
       }
       .fc-bot-input {
         min-width: 0;
         height: 64px;
         border: 1px solid var(--fc-border);
-        border-radius: 28px;
-        background: rgba(255, 255, 255, 0.86);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.95);
         padding: 0 22px;
         font: inherit;
         font-size: 17px;
@@ -548,8 +537,8 @@
       .fc-bot-submit {
         min-width: 0;
         border: 0;
-        border-radius: 28px;
-        background: var(--fc-line);
+        border-radius: 24px;
+        background: linear-gradient(135deg, #3f8df4 0%, #0867df 100%);
         color: #fff;
         font: inherit;
         font-weight: 800;
@@ -562,36 +551,48 @@
         border: 1px solid var(--fc-border);
         border-radius: 50%;
         background: rgba(255, 255, 255, 0.9);
-        color: var(--fc-line);
+        color: #0f172a;
         font: inherit;
         font-size: 19px;
         cursor: pointer;
       }
       .fc-answer {
         display: grid;
-        gap: 13px;
+        gap: 0;
+      }
+      .fc-answer-card {
+        padding: 20px 17px 18px;
+        border-radius: 24px;
+        background: #fff;
+        box-shadow: 0 16px 36px rgba(48, 92, 154, 0.1);
       }
       .fc-answer-title {
-        margin: 0;
+        margin: 0 0 18px;
         color: var(--fc-ink);
-        font-size: 18px;
+        font-size: 24px;
         line-height: 1.45;
+        font-weight: 900;
       }
       .fc-answer-block {
         display: grid;
-        gap: 5px;
-        padding-top: 2px;
+        gap: 9px;
+        padding: 16px 0 18px;
+        border-top: 1px solid #d7dfec;
+      }
+      .fc-answer-title + .fc-answer-block {
+        border-top: 0;
+        padding-top: 0;
       }
       .fc-answer-label {
         color: var(--fc-line-dark);
-        font-size: 14px;
+        font-size: 18px;
         font-weight: 900;
       }
       .fc-answer-value {
         color: var(--fc-ink);
-        font-size: 16px;
-        font-weight: 750;
-        line-height: 1.65;
+        font-size: 17px;
+        font-weight: 500;
+        line-height: 1.75;
         white-space: pre-line;
       }
       .fc-answer-value strong {
@@ -599,11 +600,12 @@
       }
       .fc-answer-details {
         border-top: 1px solid var(--fc-border);
-        padding-top: 10px;
+        padding-top: 14px;
       }
       .fc-answer-details summary {
         color: var(--fc-line-dark);
         font-weight: 900;
+        font-size: 16px;
         cursor: pointer;
       }
       .fc-answer-details p {
@@ -613,13 +615,19 @@
         white-space: pre-line;
       }
       .fc-next-title {
+        margin: 24px 0 10px;
         color: var(--fc-muted);
-        font-size: 14px;
+        font-size: 18px;
         font-weight: 900;
       }
       .fc-next-list {
+        margin-bottom: 18px;
+        padding: 13px 18px;
         display: grid;
-        gap: 7px;
+        gap: 10px;
+        border-radius: 19px;
+        background: #fff;
+        box-shadow: 0 12px 28px rgba(48, 92, 154, 0.08);
       }
       .fc-next-button {
         border: 0;
@@ -627,12 +635,20 @@
         color: var(--fc-line-dark);
         padding: 0;
         font: inherit;
-        font-weight: 800;
+        font-size: 16px;
+        font-weight: 700;
         text-align: left;
         cursor: pointer;
       }
+      .fc-next-button::after {
+        content: "▶";
+        float: right;
+        color: #8ab5f3;
+        font-size: 12px;
+        margin-top: 4px;
+      }
       .fc-feedback {
-        display: flex;
+        display: none;
         flex-wrap: wrap;
         gap: 8px;
         padding-top: 6px;
@@ -675,10 +691,7 @@
           border-radius: 0;
         }
         .fc-bot-inline .fc-bot-header {
-          min-height: 72px;
-          margin-left: 64px;
-          padding: 12px 15px;
-          border-radius: 20px 20px 0 0;
+          display: none;
         }
         .fc-bot-inline .fc-bot-avatar {
           width: 52px;
@@ -689,20 +702,20 @@
           height: 42px;
         }
         .fc-bot-inline .fc-bot-message {
-          max-width: 92%;
+          max-width: 100%;
           font-size: 14px;
         }
         .fc-bot-inline .fc-bot-messages {
-          padding: 0 0 14px 64px;
+          padding: 7px 9px 14px;
         }
         .fc-bot-inline .fc-bot-suggestions {
-          padding: 0 0 12px 64px;
+          padding: 0 19px 14px;
         }
         .fc-bot-inline .fc-bot-suggestion {
-          min-height: 36px;
-          padding: 0 13px;
+          min-height: 41px;
+          padding: 0 10px;
           border-radius: 999px;
-          font-size: 13px;
+          font-size: 15px;
         }
         .fc-bot-inline .fc-bot-title strong {
           font-size: 15px;
@@ -711,7 +724,7 @@
           font-size: 12px;
         }
         .fc-bot-form {
-          grid-template-columns: 1fr 44px 82px;
+          grid-template-columns: 1fr 54px 74px;
           gap: 8px;
         }
         .fc-bot-input {
@@ -815,17 +828,19 @@
   function appendStructuredAnswer(message, content, ask) {
     const data = summarizeAnswer(content);
     const wrapper = createElement("div", "fc-answer");
-    wrapper.append(createElement("h3", "fc-answer-title", data.title));
-    wrapper.append(createAnswerBlock("✅ 結論", data.conclusion.replace(/(4,980円|1,980円|35,000円|40,000円|50,000円|80点以上|119日)/g, "<strong>$1</strong>")));
-    wrapper.append(createAnswerBlock("💡 理由", data.reason));
-    wrapper.append(createAnswerBlock("⚠️ 注意", data.note));
+    const answerCard = createElement("div", "fc-answer-card");
+    answerCard.append(createElement("h3", "fc-answer-title", data.title));
+    answerCard.append(createAnswerBlock("✅ 結論", data.conclusion.replace(/(4,980円|1,980円|35,000円|40,000円|50,000円|80点以上|119日)/g, "<strong>$1</strong>")));
+    answerCard.append(createAnswerBlock("💡 理由", data.reason));
+    answerCard.append(createAnswerBlock("⚠️ 注意", data.note));
 
     if (data.detail) {
       const details = createElement("details", "fc-answer-details");
       details.append(createElement("summary", "", "📖 詳細を見る"));
       details.append(createElement("p", "", data.detail));
-      wrapper.appendChild(details);
+      answerCard.appendChild(details);
     }
+    wrapper.appendChild(answerCard);
 
     const nextTitle = createElement("div", "fc-next-title", "次によくある質問");
     const nextList = createElement("div", "fc-next-list");
