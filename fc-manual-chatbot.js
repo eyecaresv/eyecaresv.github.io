@@ -84,9 +84,18 @@
       id: "preopen-coupon",
       category: "集客・HPB",
       title: "プレオープン期間の初回クーポン価格",
-      keywords: ["プレオープン", "初回", "クーポン", "HPB", "ホットペッパー", "4,980", "1,980", "特別価格"],
+      keywords: ["プレオープン", "初回", "クーポン", "HPB", "ホットペッパー", "4,980", "1,980", "特別価格", "いくら", "金額", "価格", "出せる"],
       answer:
         "結論、HPBクーポンは基本的に通常の4,980円クーポンでの掲載を推奨しています。知人や紹介の方こそ、応援やお祝いの気持ちも含め、適正価格で来店いただけるケースが多いためです。プレオープン期間限定で特別クーポンを追加する場合は、1,980円までであれば可能です。その他のクーポン追加や特別価格設定を希望する場合は、事前に本部へ確認してください。",
+      structured: {
+        title: "HPBクーポン",
+        conclusion: "通常掲載は4,980円を推奨しています。",
+        reason: "知人・紹介のお客様は、応援やお祝いの意味もあり、通常価格で来店いただけるケースが多いためです。",
+        note: "プレオープン限定は1,980円まで設定可能です。それ以外の特別価格や独自クーポンは本部確認が必要です。",
+        detail:
+          "基本は4,980円掲載を推奨しています。プレオープン期間限定で特別クーポンを追加する場合のみ、1,980円まで可能です。その他のクーポン追加や特別価格設定は、事前に本部へ確認してください。",
+        nextQuestions: ["HPB写真は何枚必要ですか？", "口コミ目標はありますか？", "ランキングを上げるには？", "広告費はいくらですか？"],
+      },
     },
     {
       id: "ad-metrics",
@@ -181,10 +190,16 @@
     },
   ];
 
-  const sampleQuestions = [
-    "領収書はどうやって発行しますか？",
-    "HPBのクーポンはいくらまで出せますか？",
+  const popularQuestions = [
+    { label: "HPB", question: "HPBのクーポンはいくらまで出せますか？" },
+    { label: "広告", question: "広告の指標について教えてください" },
+    { label: "研修", question: "研修を欠席した場合はどうすればいいですか？" },
+    { label: "契約", question: "返金保証の条件を教えてください" },
+    { label: "採用", question: "入社前テストについて教えてください" },
+    { label: "物販", question: "物販インセンティブについて教えてください" },
   ];
+
+  const defaultNextQuestions = ["HPB写真は何枚必要ですか？", "口コミ目標はありますか？", "広告費はいくらですか？", "契約まわりで確認することは？"];
 
   const stopWords = new Set(["です", "ます", "する", "した", "して", "について", "ください", "教えて", "場合", "どう", "とは"]);
 
@@ -444,7 +459,21 @@
         border-radius: 18px 18px 4px 18px;
       }
       .fc-bot-message.bot {
-        border-radius: 0 0 24px 24px;
+        position: relative;
+        border-radius: 24px;
+      }
+      .fc-bot-message.bot::before {
+        content: "🤖";
+        position: absolute;
+        left: -42px;
+        top: 10px;
+        width: 30px;
+        height: 30px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 8px 20px rgba(48, 92, 154, 0.12);
       }
       .fc-bot-message small {
         display: block;
@@ -464,9 +493,10 @@
         text-decoration: underline;
       }
       .fc-bot-suggestions {
-        display: grid;
-        gap: 12px;
-        padding: 0 0 18px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        padding: 0 0 18px 72px;
         background: transparent;
       }
       .fc-bot-suggestions.is-hidden {
@@ -477,52 +507,25 @@
       }
       .fc-bot-suggestion {
         border: 1px solid var(--fc-border);
-        border-radius: 20px;
-        background: #fff;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.92);
         color: var(--fc-ink);
-        min-height: 82px;
-        width: 100%;
-        padding: 0 24px 0 88px;
+        min-height: 38px;
+        width: auto;
+        padding: 0 15px;
         font: inherit;
-        font-size: 18px;
-        font-weight: 700;
-        text-align: left;
+        font-size: 14px;
+        font-weight: 800;
+        text-align: center;
         cursor: pointer;
-        position: relative;
-        box-shadow: 0 14px 34px rgba(48, 92, 154, 0.08);
-      }
-      .fc-bot-suggestion::before {
-        content: "□";
-        position: absolute;
-        left: 22px;
-        top: 50%;
-        width: 46px;
-        height: 46px;
-        display: grid;
-        place-items: center;
-        border-radius: 50%;
-        background: #edf4ff;
-        color: var(--fc-line);
-        transform: translateY(-50%);
-        font-size: 23px;
-        font-weight: 900;
-      }
-      .fc-bot-suggestion::after {
-        content: "›";
-        position: absolute;
-        right: 20px;
-        top: 50%;
-        color: #8b9bb4;
-        transform: translateY(-50%);
-        font-size: 34px;
-        font-weight: 400;
+        box-shadow: 0 10px 24px rgba(48, 92, 154, 0.08);
       }
       .fc-bot-form {
         position: sticky;
         bottom: 0;
         display: grid;
-        grid-template-columns: 1fr 118px;
-        gap: 12px;
+        grid-template-columns: 1fr 46px 92px;
+        gap: 9px;
         padding: 0 0 env(safe-area-inset-bottom);
         background: transparent;
       }
@@ -553,6 +556,99 @@
         font-size: 18px;
         cursor: pointer;
         box-shadow: 0 12px 26px rgba(72, 122, 205, 0.28);
+      }
+      .fc-bot-voice {
+        min-width: 0;
+        border: 1px solid var(--fc-border);
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--fc-line);
+        font: inherit;
+        font-size: 19px;
+        cursor: pointer;
+      }
+      .fc-answer {
+        display: grid;
+        gap: 13px;
+      }
+      .fc-answer-title {
+        margin: 0;
+        color: var(--fc-ink);
+        font-size: 18px;
+        line-height: 1.45;
+      }
+      .fc-answer-block {
+        display: grid;
+        gap: 5px;
+        padding-top: 2px;
+      }
+      .fc-answer-label {
+        color: var(--fc-line-dark);
+        font-size: 14px;
+        font-weight: 900;
+      }
+      .fc-answer-value {
+        color: var(--fc-ink);
+        font-size: 16px;
+        font-weight: 750;
+        line-height: 1.65;
+        white-space: pre-line;
+      }
+      .fc-answer-value strong {
+        font-size: 22px;
+      }
+      .fc-answer-details {
+        border-top: 1px solid var(--fc-border);
+        padding-top: 10px;
+      }
+      .fc-answer-details summary {
+        color: var(--fc-line-dark);
+        font-weight: 900;
+        cursor: pointer;
+      }
+      .fc-answer-details p {
+        margin: 9px 0 0;
+        color: #4b5563;
+        line-height: 1.75;
+        white-space: pre-line;
+      }
+      .fc-next-title {
+        color: var(--fc-muted);
+        font-size: 14px;
+        font-weight: 900;
+      }
+      .fc-next-list {
+        display: grid;
+        gap: 7px;
+      }
+      .fc-next-button {
+        border: 0;
+        background: transparent;
+        color: var(--fc-line-dark);
+        padding: 0;
+        font: inherit;
+        font-weight: 800;
+        text-align: left;
+        cursor: pointer;
+      }
+      .fc-feedback {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding-top: 6px;
+      }
+      .fc-feedback button,
+      .fc-feedback a {
+        border: 1px solid var(--fc-border);
+        border-radius: 999px;
+        background: #fff;
+        color: #4b5563;
+        padding: 7px 10px;
+        font: inherit;
+        font-size: 12px;
+        font-weight: 800;
+        text-decoration: none;
+        cursor: pointer;
       }
       @media (max-width: 520px) {
         .fc-bot-button {
@@ -600,23 +696,13 @@
           padding: 0 0 14px 64px;
         }
         .fc-bot-inline .fc-bot-suggestions {
-          padding: 0 0 12px;
+          padding: 0 0 12px 64px;
         }
         .fc-bot-inline .fc-bot-suggestion {
-          min-height: 70px;
-          padding: 0 38px 0 72px;
-          border-radius: 18px;
-          font-size: 15px;
-        }
-        .fc-bot-inline .fc-bot-suggestion::before {
-          left: 17px;
-          width: 40px;
-          height: 40px;
-          font-size: 20px;
-        }
-        .fc-bot-inline .fc-bot-suggestion::after {
-          right: 16px;
-          font-size: 28px;
+          min-height: 36px;
+          padding: 0 13px;
+          border-radius: 999px;
+          font-size: 13px;
         }
         .fc-bot-inline .fc-bot-title strong {
           font-size: 15px;
@@ -625,8 +711,8 @@
           font-size: 12px;
         }
         .fc-bot-form {
-          grid-template-columns: 1fr 92px;
-          gap: 10px;
+          grid-template-columns: 1fr 44px 82px;
+          gap: 8px;
         }
         .fc-bot-input {
           height: 58px;
@@ -661,39 +747,115 @@
         .slice(1)
         .filter((result) => result.score >= 18 && result.score >= results[0].score * 0.55)
         .map((result) => result.entry),
+      nextQuestions: results[0].entry.structured?.nextQuestions || defaultNextQuestions,
     };
   }
 
-  function formatChatAnswer(content) {
+  function createAnswerBlock(label, value) {
+    const block = createElement("div", "fc-answer-block");
+    block.append(createElement("div", "fc-answer-label", label));
+    const body = createElement("div", "fc-answer-value");
+    body.innerHTML = value;
+    block.appendChild(body);
+    return block;
+  }
+
+  function summarizeAnswer(content) {
     const answer = String(content.answer || "").trim();
-    if (!answer) return "";
+    if (!answer) {
+      return {
+        title: content.title || "回答",
+        conclusion: "該当する回答が見つかりませんでした。",
+        reason: "質問の表現を少し変えると見つかる場合があります。",
+        note: "判断が必要な内容は本部へ確認してください。",
+        detail: "",
+        nextQuestions: defaultNextQuestions,
+      };
+    }
+
+    if (content.structured) return content.structured;
 
     if (content.category === "使い方") {
-      return answer.replace(/。/g, "。\n").trim();
+      return {
+        title: "FC本部AIアシスタント",
+        conclusion: "FC運営について何でも質問してください。",
+        reason: "HPB、返金保証、研修、物販、就業規則など、登録済みの回答から近い内容を探します。",
+        note: "判断が必要な内容は本部へ確認してください。",
+        detail: answer,
+        nextQuestions: popularQuestions.slice(0, 4).map((item) => item.question),
+      };
     }
 
     if (content.category === "確認が必要です") {
-      return answer
-        .replace("この質問に近いマニュアル回答を見つけられませんでした。", "すみません、近い回答を見つけられませんでした。")
-        .replace(/。/g, "。\n")
-        .trim();
+      return {
+        title: "確認が必要です",
+        conclusion: "すみません、近い回答を見つけられませんでした。",
+        reason: "言い方を少し変えると、近い回答が出る場合があります。",
+        note: "急ぎの判断や例外対応は本部へ確認してください。",
+        detail: answer,
+        nextQuestions: popularQuestions.slice(0, 4).map((item) => item.question),
+      };
     }
 
-    const chatAnswer = answer.startsWith("結論、")
-      ? answer.replace(/^結論、/, "はい、結論から言うと、")
-      : `はい、こちらです。\n\n${answer}`;
+    const sentences = answer.split("。").map((sentence) => sentence.trim()).filter(Boolean);
+    const first = sentences[0] || answer;
+    const second = sentences[1] || "詳細は下の内容を確認してください。";
+    const caution = sentences.find((sentence) => /ただし|必要|確認|注意|不可|NG|対象外/.test(sentence)) || "例外や判断が必要な場合は、本部確認がおすすめです。";
 
-    return chatAnswer.replace(/。/g, "。\n").trim();
+    return {
+      title: content.title || content.category || "回答",
+      conclusion: first.replace(/^結論、/, ""),
+      reason: second,
+      note: caution,
+      detail: answer,
+      nextQuestions: content.nextQuestions || defaultNextQuestions,
+    };
   }
 
-  function appendMessage(messagesNode, role, content) {
+  function appendStructuredAnswer(message, content, ask) {
+    const data = summarizeAnswer(content);
+    const wrapper = createElement("div", "fc-answer");
+    wrapper.append(createElement("h3", "fc-answer-title", data.title));
+    wrapper.append(createAnswerBlock("✅ 結論", data.conclusion.replace(/(4,980円|1,980円|35,000円|40,000円|50,000円|80点以上|119日)/g, "<strong>$1</strong>")));
+    wrapper.append(createAnswerBlock("💡 理由", data.reason));
+    wrapper.append(createAnswerBlock("⚠️ 注意", data.note));
+
+    if (data.detail) {
+      const details = createElement("details", "fc-answer-details");
+      details.append(createElement("summary", "", "📖 詳細を見る"));
+      details.append(createElement("p", "", data.detail));
+      wrapper.appendChild(details);
+    }
+
+    const nextTitle = createElement("div", "fc-next-title", "次によくある質問");
+    const nextList = createElement("div", "fc-next-list");
+    (data.nextQuestions || defaultNextQuestions).slice(0, 4).forEach((question) => {
+      const button = createElement("button", "fc-next-button", `・${question}`);
+      button.type = "button";
+      button.addEventListener("click", () => ask(question));
+      nextList.appendChild(button);
+    });
+    wrapper.append(nextTitle, nextList);
+
+    const feedback = createElement("div", "fc-feedback");
+    feedback.append(createElement("button", "", "👍 役に立った"));
+    feedback.append(createElement("button", "", "👎 違った"));
+    const contact = createElement("a", "", "📞 本部へ問い合わせ");
+    contact.href = manualUrl;
+    contact.target = "_blank";
+    contact.rel = "noopener noreferrer";
+    feedback.appendChild(contact);
+    wrapper.appendChild(feedback);
+    message.appendChild(wrapper);
+  }
+
+  function appendMessage(messagesNode, role, content, ask) {
     const message = createElement("div", `fc-bot-message ${role}`);
 
     if (typeof content === "string") {
       message.textContent = content;
     } else {
-      if (content.category) message.appendChild(createElement("small", "", `${content.category} / ${content.title}`));
-      message.appendChild(document.createTextNode(formatChatAnswer(content)));
+      appendStructuredAnswer(message, content, ask);
 
       if (content.links && content.links.length) {
         const links = createElement("div", "fc-bot-links");
@@ -707,11 +869,6 @@
         message.appendChild(links);
       }
 
-      if (content.related && content.related.length) {
-        const related = createElement("small", "", `関連: ${content.related.map((item) => item.title).join(" / ")}`);
-        related.style.marginTop = "9px";
-        message.appendChild(related);
-      }
     }
 
     messagesNode.appendChild(message);
@@ -734,7 +891,7 @@
     const header = createElement("header", "fc-bot-header");
     const avatar = createElement("div", "fc-bot-avatar", "FC");
     const title = createElement("div", "fc-bot-title");
-    title.innerHTML = `<strong>${brandName} 質問bot</strong><span>マニュアル回答から近い内容を探します</span>`;
+    title.innerHTML = `<strong>${brandName} AI</strong><span>FC運営について何でも質問してください</span>`;
     const close = createElement("button", "fc-bot-close", "×");
     close.type = "button";
     close.setAttribute("aria-label", "閉じる");
@@ -742,21 +899,24 @@
 
     const messages = createElement("div", "fc-bot-messages");
     const suggestions = createElement("div", "fc-bot-suggestions");
-    sampleQuestions.forEach((question) => {
-      const suggestion = createElement("button", "fc-bot-suggestion", question);
+    popularQuestions.forEach((item) => {
+      const suggestion = createElement("button", "fc-bot-suggestion", item.label);
       suggestion.type = "button";
-      suggestion.addEventListener("click", () => ask(question));
+      suggestion.addEventListener("click", () => ask(item.question));
       suggestions.appendChild(suggestion);
     });
 
     const form = createElement("form", "fc-bot-form");
     const input = createElement("input", "fc-bot-input");
     input.type = "text";
-    input.placeholder = "質問を入力してください";
+    input.placeholder = "質問を入力...";
     input.autocomplete = "off";
-    const submit = createElement("button", "fc-bot-submit", "▷ 送信");
+    const voice = createElement("button", "fc-bot-voice", "🎤");
+    voice.type = "button";
+    voice.setAttribute("aria-label", "音声入力");
+    const submit = createElement("button", "fc-bot-submit", "送信");
     submit.type = "submit";
-    form.append(input, submit);
+    form.append(input, voice, submit);
 
     panel.append(header, messages, suggestions, form);
     root.append(button, panel);
@@ -773,12 +933,13 @@
       const trimmed = question.trim();
       if (!trimmed) return;
       setOpen(true);
-      appendMessage(messages, "user", trimmed);
+      appendMessage(messages, "user", trimmed, ask);
       const result = buildAnswer(trimmed);
       appendMessage(messages, "bot", {
         ...result.entry,
         related: result.related,
-      });
+        nextQuestions: result.nextQuestions,
+      }, ask);
       suggestions.classList.add("is-hidden");
       input.value = "";
     }
@@ -794,13 +955,17 @@
       event.preventDefault();
       ask(input.value);
     });
+    voice.addEventListener("click", () => {
+      input.focus();
+      input.placeholder = "音声入力は端末のマイクボタンから入力できます";
+    });
 
     appendMessage(messages, "bot", {
       category: "使い方",
-      title: "FCマニュアル質問bot",
+      title: "アイケアLaBo FC AI",
       answer:
-        "FC運用について知りたいことを入力してください。領収書、返金保証、HPB、研修、物販、就業規則など、登録済みの回答から近い内容を返します。",
-    });
+        "FC運営について何でも質問してください。HPB、返金保証、開業準備、広告、備品、研修など、聞きたい内容を入力すると近い回答を返します。",
+    }, ask);
   }
 
   if (document.readyState === "loading") {
