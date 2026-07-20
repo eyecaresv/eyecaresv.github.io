@@ -54,18 +54,19 @@
       }
 
       .topbar {
-        min-height: 108px;
+        min-height: 155px;
         display: grid;
         align-content: center;
-        gap: 12px;
-        padding: max(25px, env(safe-area-inset-top)) 22px 24px;
+        gap: 14px;
+        padding: max(32px, env(safe-area-inset-top)) 28px 34px;
         background: linear-gradient(135deg, #3e8df4 0%, #0562da 100%);
         color: #fff;
+        border-radius: 0 0 32px 32px;
       }
 
       .topbar h1 {
         margin: 0;
-        font-size: 27px;
+        font-size: 31px;
         line-height: 1.15;
         font-weight: 900;
         letter-spacing: 0;
@@ -73,7 +74,7 @@
 
       .topbar p {
         margin: 0;
-        font-size: 16px;
+        font-size: 17px;
         line-height: 1.5;
         font-weight: 500;
       }
@@ -81,7 +82,8 @@
       .chat-zone {
         min-height: 0;
         display: grid;
-        padding: 12px 9px 0;
+        padding: 0 15px 0;
+        margin-top: -18px;
       }
 
       #fc-chatbot-mount {
@@ -112,12 +114,12 @@
 
       @media (max-width: 460px) {
         .topbar {
-          min-height: 105px;
-          padding: max(23px, env(safe-area-inset-top)) 22px 22px;
+          min-height: 150px;
+          padding: max(30px, env(safe-area-inset-top)) 26px 32px;
         }
 
         .chat-zone {
-          padding: 12px 9px 0;
+          padding: 0 15px 0;
         }
       }
     </style>
@@ -143,6 +145,6 @@
         mountSelector: "#fc-chatbot-mount",
       };
     </script>
-    <script src="/fc-manual-chatbot.js?v=input-first-ux"></script>
+    <script src="/fc-manual-chatbot.js?v=premium-manual-ui"></script>
   </body>
 </html>

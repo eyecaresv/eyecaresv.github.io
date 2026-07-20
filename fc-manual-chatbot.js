@@ -190,15 +190,11 @@
     },
   ];
 
-  const popularQuestions = [
-    { label: "HPB", icon: "▱", question: "HPBのクーポンはいくらまで出せますか？" },
-    { label: "広告", icon: "▥", question: "広告の指標について教えてください" },
-    { label: "研修", icon: "▵", question: "研修を欠席した場合はどうすればいいですか？" },
-    { label: "契約", icon: "▤", question: "契約まわりで確認することは？" },
-    { label: "採用", icon: "♙", question: "入社前テストについて教えてください" },
-    { label: "物販", icon: "▢", question: "物販インセンティブについて教えてください" },
-    { label: "返金保証", icon: "◇", question: "返金保証の条件を教えてください" },
-    { label: "就業規則", icon: "▣", question: "就業規則について教えてください" },
+  const manualSections = [
+    { label: "サービス・料金", icon: "◇", question: "サービス・料金について教えてください" },
+    { label: "接客・施術", icon: "♙", question: "接客・施術について教えてください" },
+    { label: "会計・システム", icon: "▤", question: "会計・システムについて教えてください" },
+    { label: "店舗運営", icon: "⌂", question: "店舗運営について教えてください" },
   ];
 
   const defaultNextQuestions = ["HPB写真は何枚必要ですか？", "口コミ目標はありますか？", "広告費はいくらですか？", "契約まわりで確認することは？"];
@@ -215,12 +211,12 @@
   };
 
   const initialFaqs = [
+    "回数券の有効期限を教えてください",
+    "返金対応の手順を教えてください",
+    "Squareの操作方法を教えてください",
     "HPBクーポンはいくらまで設定できますか？",
-    "返金保証の条件を教えてください",
     "研修を欠席した場合はどうなりますか？",
     "広告の指標について教えてください",
-    "物販インセンティブについて教えてください",
-    "就業規則について教えてください",
   ];
 
   const stopWords = new Set(["です", "ます", "する", "した", "して", "について", "ください", "教えて", "場合", "どう", "とは"]);
@@ -515,20 +511,32 @@
       }
       .fc-bot-suggestions {
         order: 2;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        padding: 10px 19px 18px;
-        background: transparent;
+        display: grid;
+        gap: 10px;
+        margin: 0 0 24px;
+        padding: 28px;
+        border-radius: 28px;
+        background: #fff;
+        box-shadow: 0 14px 34px rgba(48, 92, 154, 0.08);
       }
       .fc-bot-suggestions::before {
-        content: "カテゴリから探す";
-        width: 100%;
+        content: "業務マニュアル\A日々の業務に必要な情報を項目別に確認できます。";
+        white-space: pre-line;
         display: block;
-        margin: 8px 0 2px;
+        margin: 0 0 12px;
         color: var(--fc-ink);
-        font-size: 18px;
+        font-size: 20px;
+        line-height: 1.8;
         font-weight: 900;
+      }
+      .fc-bot-suggestions::after {
+        content: "業務マニュアルをすべて見る⌄";
+        display: block;
+        padding-top: 12px;
+        color: var(--fc-line-dark);
+        font-size: 15px;
+        font-weight: 850;
+        text-align: center;
       }
       .fc-bot-suggestions.is-hidden {
         display: none;
@@ -541,29 +549,43 @@
       }
       .fc-bot-suggestion {
         border: 1px solid var(--fc-border);
-        border-radius: 16px;
+        border-radius: 14px;
         background: rgba(255, 255, 255, 0.92);
         color: var(--fc-ink);
-        min-height: 58px;
-        width: calc(50% - 4px);
-        padding: 0 12px;
+        min-height: 56px;
+        width: 100%;
+        padding: 0 42px 0 48px;
         font: inherit;
         font-size: 15px;
         font-weight: 800;
-        text-align: center;
+        text-align: left;
         cursor: pointer;
+        position: relative;
         box-shadow: 0 10px 24px rgba(48, 92, 154, 0.08);
       }
       .fc-bot-suggestion-icon {
-        margin-right: 7px;
+        position: absolute;
+        left: 17px;
+        top: 50%;
+        transform: translateY(-50%);
         color: var(--fc-line-dark);
         font-size: 18px;
       }
+      .fc-bot-suggestion::after {
+        content: "›";
+        position: absolute;
+        right: 17px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #4b5563;
+        font-size: 28px;
+        font-weight: 400;
+      }
       .fc-home-faq {
         order: 3;
-        margin: 6px 19px 20px;
-        padding: 18px 16px 14px;
-        border-radius: 20px;
+        margin: 0 0 24px;
+        padding: 28px;
+        border-radius: 28px;
         background: #fff;
         box-shadow: 0 14px 34px rgba(48, 92, 154, 0.08);
       }
@@ -571,25 +593,42 @@
         display: none;
       }
       .fc-home-faq h2 {
-        margin: 0 0 12px;
+        margin: 0 0 16px;
         color: var(--fc-ink);
-        font-size: 18px;
+        font-size: 20px;
         line-height: 1.4;
       }
       .fc-home-faq-list {
         display: grid;
       }
       .fc-home-faq button {
-        min-height: 50px;
+        min-height: 56px;
         border: 0;
         border-top: 1px solid #e2e8f0;
         background: transparent;
         color: var(--fc-ink);
-        padding: 0;
+        padding: 0 24px 0 42px;
         font: inherit;
         font-size: 15px;
         text-align: left;
         cursor: pointer;
+        position: relative;
+      }
+      .fc-home-faq button::before {
+        content: "Q";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        width: 26px;
+        height: 26px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: #eef5ff;
+        color: var(--fc-line-dark);
+        transform: translateY(-50%);
+        font-size: 13px;
+        font-weight: 900;
       }
       .fc-home-faq button::after {
         content: "›";
@@ -601,6 +640,11 @@
       .fc-home-more {
         color: var(--fc-line-dark) !important;
         font-weight: 900;
+        justify-content: center;
+        text-align: center !important;
+      }
+      .fc-home-more::before {
+        content: none !important;
       }
       .fc-home-note {
         order: 5;
@@ -660,12 +704,12 @@
       }
       .fc-bot-form {
         order: 1;
-        margin: 0 0 8px;
+        margin: 0 0 24px;
         display: grid;
-        grid-template-columns: 1fr 54px 74px;
-        gap: 9px;
-        padding: 28px 19px 20px;
-        border-radius: 0 0 24px 24px;
+        grid-template-columns: 1fr 74px;
+        gap: 12px;
+        padding: 28px;
+        border-radius: 28px;
         background: #fff;
         box-shadow: 0 18px 42px rgba(48, 92, 154, 0.08);
       }
@@ -680,7 +724,7 @@
         backdrop-filter: blur(12px);
       }
       .fc-bot-form::before {
-        content: "何についてお困りですか？";
+        content: "何について知りたいですか？";
         grid-column: 1 / -1;
         margin-bottom: 10px;
         color: var(--fc-ink);
@@ -691,7 +735,7 @@
         content: none;
       }
       .fc-bot-form::after {
-        content: "例：HPBクーポンはいくらまで設定できますか？";
+        content: "例：回数券の有効期限を教えてください";
         grid-column: 1 / -1;
         color: #8a96aa;
         font-size: 14px;
@@ -703,7 +747,7 @@
       }
       .fc-bot-input {
         min-width: 0;
-        height: 58px;
+        height: 60px;
         border: 1px solid var(--fc-border);
         border-radius: 20px;
         background: rgba(255, 255, 255, 0.95);
@@ -728,17 +772,6 @@
         font-size: 18px;
         cursor: pointer;
         box-shadow: 0 12px 26px rgba(72, 122, 205, 0.28);
-      }
-      .fc-bot-voice {
-        min-width: 0;
-        border: 1px solid var(--fc-border);
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.9);
-        color: #0f172a;
-        font: inherit;
-        font-size: 19px;
-        cursor: pointer;
-        box-shadow: 0 10px 22px rgba(48, 92, 154, 0.08);
       }
       .fc-answer {
         display: grid;
@@ -893,12 +926,12 @@
           padding: 7px 9px 14px;
         }
         .fc-bot-inline .fc-bot-suggestions {
-          padding: 8px 19px 18px;
+          padding: 24px;
         }
         .fc-bot-inline .fc-bot-suggestion {
           min-height: 56px;
-          padding: 0 10px;
-          border-radius: 16px;
+          padding: 0 42px 0 48px;
+          border-radius: 14px;
           font-size: 15px;
         }
         .fc-bot-inline .fc-bot-title strong {
@@ -908,8 +941,8 @@
           font-size: 12px;
         }
         .fc-bot-form {
-          grid-template-columns: 1fr 54px 74px;
-          gap: 8px;
+          grid-template-columns: 1fr 74px;
+          gap: 12px;
         }
         .fc-bot-input {
           height: 58px;
@@ -979,7 +1012,7 @@
         reason: "HPB、返金保証、研修、物販、就業規則など、登録済みの回答から近い内容を探します。",
         note: "判断が必要な内容は本部へ確認してください。",
         detail: answer,
-        nextQuestions: popularQuestions.slice(0, 4).map((item) => item.question),
+        nextQuestions: initialFaqs.slice(0, 4),
       };
     }
 
@@ -990,7 +1023,7 @@
         reason: "言い方を少し変えると、近い回答が出る場合があります。",
         note: "急ぎの判断や例外対応は本部へ確認してください。",
         detail: answer,
-        nextQuestions: popularQuestions.slice(0, 4).map((item) => item.question),
+        nextQuestions: initialFaqs.slice(0, 4),
       };
     }
 
@@ -1142,7 +1175,7 @@
 
     const messages = createElement("div", "fc-bot-messages");
     const suggestions = createElement("div", "fc-bot-suggestions");
-    popularQuestions.forEach((item) => {
+    manualSections.forEach((item) => {
       const suggestion = createElement("button", "fc-bot-suggestion");
       suggestion.type = "button";
       suggestion.innerHTML = `<span class="fc-bot-suggestion-icon">${item.icon}</span>${item.label}`;
@@ -1150,21 +1183,17 @@
       suggestions.appendChild(suggestion);
     });
     const faq = buildFaq(ask);
-    const homeNote = createElement("div", "fc-home-note", "すぐに解決したいことをAIがサポートします。マニュアルや規則、よくある質問から最適な回答をご案内します。");
 
     const form = createElement("form", "fc-bot-form");
     const input = createElement("input", "fc-bot-input");
     input.type = "text";
     input.placeholder = "質問を入力してください";
     input.autocomplete = "off";
-    const voice = createElement("button", "fc-bot-voice", "🎤");
-    voice.type = "button";
-    voice.setAttribute("aria-label", "音声入力");
     const submit = createElement("button", "fc-bot-submit", "送信");
     submit.type = "submit";
-    form.append(input, voice, submit);
+    form.append(input, submit);
 
-    panel.append(header, form, suggestions, faq, homeNote, messages);
+    panel.append(header, form, suggestions, faq, messages);
     root.append(button, panel);
     (mountNode || document.body).appendChild(root);
 
@@ -1206,11 +1235,6 @@
       event.preventDefault();
       ask(input.value);
     });
-    voice.addEventListener("click", () => {
-      input.focus();
-      input.placeholder = "音声入力は端末のマイクボタンから入力できます";
-    });
-
   }
 
   if (document.readyState === "loading") {
