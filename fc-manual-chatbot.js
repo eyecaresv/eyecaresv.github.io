@@ -664,6 +664,28 @@
     };
   }
 
+  function formatChatAnswer(content) {
+    const answer = String(content.answer || "").trim();
+    if (!answer) return "";
+
+    if (content.category === "使い方") {
+      return answer.replace(/。/g, "。\n").trim();
+    }
+
+    if (content.category === "確認が必要です") {
+      return answer
+        .replace("この質問に近いマニュアル回答を見つけられませんでした。", "すみません、近い回答を見つけられませんでした。")
+        .replace(/。/g, "。\n")
+        .trim();
+    }
+
+    const chatAnswer = answer.startsWith("結論、")
+      ? answer.replace(/^結論、/, "はい、結論から言うと、")
+      : `はい、こちらです。\n\n${answer}`;
+
+    return chatAnswer.replace(/。/g, "。\n").trim();
+  }
+
   function appendMessage(messagesNode, role, content) {
     const message = createElement("div", `fc-bot-message ${role}`);
 
@@ -671,7 +693,7 @@
       message.textContent = content;
     } else {
       if (content.category) message.appendChild(createElement("small", "", `${content.category} / ${content.title}`));
-      message.appendChild(document.createTextNode(content.answer));
+      message.appendChild(document.createTextNode(formatChatAnswer(content)));
 
       if (content.links && content.links.length) {
         const links = createElement("div", "fc-bot-links");
