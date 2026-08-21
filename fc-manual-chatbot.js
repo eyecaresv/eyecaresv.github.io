@@ -4,7 +4,37 @@
   const botConfig = window.FcManualChatbotConfig || {};
   const brandName = botConfig.brandName || "アイケアLaBo FC";
   const manualUrl = botConfig.manualUrl || "https://eyecarelabo-fc-manual.netlify.app/";
+  const contactBaseUrl = botConfig.contactBaseUrl || "https://line.me/R/msg/text/";
   const mountSelector = botConfig.mountSelector || "";
+  const feedbackLogKey = "eyecareFcAiFeedbackLogs";
+
+  const systemPrompt = `あなたは「アイケアLaBo FC AI」です。
+フランチャイズ加盟店のオーナー・店長・スタッフからの、店舗運営に関する質問に答えます。
+
+最重要ルール:
+あなたの仕事は「マニュアルの場所を案内すること」ではなく「その場で答え切ること」です。
+リンクやページ番号だけを返さず、参考資料に該当箇所があるなら、その内容を要約して回答本文に書き、末尾に出典を添えます。
+
+回答フォーマット:
+1. 【結論】1〜2文で先に答える
+2. 【手順】操作や対応が必要な場合、番号付きで具体的に書く
+3. 【注意点】例外・よくある間違い・期限がある場合のみ書く
+4. 【出典】「運営マニュアル ○○章」の形式で1行だけ
+
+分量:
+標準は300字以内。前置きや挨拶は書かず、いきなり結論から入る。
+
+参考資料に答えがない場合:
+推測で答えず「その内容は現在のマニュアルに記載がありません。本部に確認が必要な内容です。」と返し、問い合わせ導線を出します。
+
+判断が分かれる領域:
+契約、労務、医療行為との線引き、広告表現、返金・クレームの最終判断、金額変更や値引き可否は断定せず本部確認へ誘導します。
+
+効果・効能:
+アイケアLaBoは整体サロンであり医療機関ではありません。「治る」「治療」「診断」「効果が保証される」は使いません。
+
+参考資料:
+{{KNOWLEDGE}}`;
 
   const knowledgeBase = [
     {
@@ -690,6 +720,15 @@
 
   const defaultNextQuestions = ["HPB写真は何枚必要ですか？", "口コミ目標はありますか？", "広告費はいくらですか？", "契約まわりで確認することは？"];
 
+  const quickQuestionChips = [
+    "サブスクの役務報告は必要ですか？",
+    "サブスクプラン変更時の客報は？",
+    "回数券の有効期限を教えてください",
+    "返金対応の手順を教えてください",
+    "Squareの操作方法を教えてください",
+    "HPBクーポンはいくらまで設定できますか？",
+  ];
+
   const categorySuggestions = {
     "サービス・料金": ["回数券の有効期限を教えてください", "回数券のアップグレード期限は？", "サブスクの繰越ルールを教えてください", "インビテーションチケットとは？"],
     "接客・施術": ["新規接客の流れを教えてください", "施術前の確認事項を教えてください", "網膜剥離後は施術できますか？", "緑内障の施術可否は？"],
@@ -780,6 +819,57 @@
       .filter((result) => result.score > 0)
       .sort((a, b) => b.score - a.score)
       .slice(0, 3);
+  }
+
+  function formatSource(entry) {
+    if (!entry || entry.category === "確認が必要です") return "運営マニュアル 該当なし";
+    return `運営マニュアル ${entry.category} / ${entry.title}`;
+  }
+
+  function createKnowledgeChunks(results) {
+    return results.map((result) => ({
+      id: result.entry.id || "",
+      chapter: result.entry.category || "",
+      heading: result.entry.title || "",
+      body: result.entry.answer || "",
+      score: result.score,
+      source: formatSource(result.entry),
+      images: result.entry.images || [],
+    }));
+  }
+
+  function buildContactUrl(question, data) {
+    const text = [
+      "アイケアLaBo FC AIから本部確認をお願いします。",
+      "",
+      `質問: ${question || ""}`,
+      "",
+      `AI回答: ${data?.conclusion || ""}`,
+      data?.note ? `注意点: ${data.note}` : "",
+    ].filter(Boolean).join("\n");
+    return `${contactBaseUrl}?${encodeURIComponent(text)}`;
+  }
+
+  function readFeedbackLogs() {
+    try {
+      return JSON.parse(window.localStorage.getItem(feedbackLogKey) || "[]");
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function saveFeedbackLog(payload) {
+    try {
+      const logs = readFeedbackLogs();
+      logs.push({
+        ...payload,
+        promptVersion: "answer-in-chat-v1",
+        createdAt: new Date().toISOString(),
+      });
+      window.localStorage.setItem(feedbackLogKey, JSON.stringify(logs.slice(-300)));
+    } catch (error) {
+      // Local feedback storage is best-effort on private browsing modes.
+    }
   }
 
   function createElement(tag, className, text) {
@@ -1341,6 +1431,29 @@
         cursor: pointer;
         box-shadow: 0 12px 26px rgba(72, 122, 205, 0.28);
       }
+      .fc-quick-chips {
+        order: 2;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin: -8px 0 24px;
+      }
+      .fc-bot-root.has-chat .fc-quick-chips {
+        display: none;
+      }
+      .fc-quick-chip {
+        min-height: 42px;
+        border: 1px solid var(--fc-border);
+        border-radius: 999px;
+        background: #fff;
+        color: var(--fc-line-dark);
+        padding: 0 14px;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 850;
+        cursor: pointer;
+        box-shadow: 0 10px 22px rgba(48, 92, 154, 0.07);
+      }
       .fc-answer {
         display: grid;
         gap: 0;
@@ -1399,6 +1512,43 @@
         line-height: 1.75;
         white-space: pre-line;
       }
+      .fc-answer-source {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid var(--fc-border);
+        color: #7c8aa0;
+        font-size: 12px;
+        font-weight: 800;
+        line-height: 1.6;
+      }
+      .fc-answer-images {
+        display: grid;
+        gap: 10px;
+        margin-top: 12px;
+      }
+      .fc-answer-image {
+        width: 100%;
+        border: 1px solid var(--fc-border);
+        border-radius: 16px;
+        background: #f8fbff;
+        cursor: zoom-in;
+      }
+      .fc-lightbox {
+        position: fixed;
+        inset: 0;
+        z-index: 2147483200;
+        display: grid;
+        place-items: center;
+        padding: 18px;
+        background: rgba(17, 24, 39, 0.72);
+      }
+      .fc-lightbox img {
+        max-width: 100%;
+        max-height: 88vh;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+      }
       .fc-next-title {
         margin: 18px 0 10px;
         color: var(--fc-muted);
@@ -1433,10 +1583,10 @@
         margin-top: 4px;
       }
       .fc-feedback {
-        display: none;
+        display: flex;
         flex-wrap: wrap;
         gap: 8px;
-        padding-top: 6px;
+        padding: 0 2px 8px;
       }
       .fc-feedback button,
       .fc-feedback a {
@@ -1450,6 +1600,26 @@
         font-weight: 800;
         text-decoration: none;
         cursor: pointer;
+      }
+      .fc-feedback button.is-selected {
+        border-color: rgba(14, 99, 246, 0.28);
+        background: #eef5ff;
+        color: var(--fc-line-dark);
+      }
+      .fc-feedback-reason {
+        width: 100%;
+        min-height: 42px;
+        border: 1px solid var(--fc-border);
+        border-radius: 14px;
+        background: #fff;
+        color: var(--fc-ink);
+        padding: 0 12px;
+        font: inherit;
+        font-size: 16px;
+        display: none;
+      }
+      .fc-feedback-reason.is-open {
+        display: block;
       }
       .fc-answer-actions {
         display: flex;
@@ -1558,12 +1728,14 @@
       return {
         entry: {
           category: "確認が必要です",
-          title: "該当する回答が見つかりませんでした",
+          title: "本部確認が必要です",
           answer:
-            "この質問に近いマニュアル回答を見つけられませんでした。表現を変えて質問するか、FCマニュアルを確認し、判断が必要な内容は本部へ確認してください。",
-          links: [{ label: "FCマニュアル", url: manualUrl }],
+            "その内容は現在のマニュアルに記載がありません。本部に確認が必要な内容です。分かる範囲での一般的な考え方として、契約・金額・返金・労務・広告表現など判断が分かれる内容は、店舗判断で確定せず本部確認をしてください。",
         },
         related: [],
+        score: results[0]?.score || 0,
+        source: "運営マニュアル 該当なし",
+        usedChunks: [],
       };
     }
 
@@ -1574,6 +1746,9 @@
         .filter((result) => result.score >= 18 && result.score >= results[0].score * 0.55)
         .map((result) => result.entry),
       nextQuestions: results[0].entry.structured?.nextQuestions || defaultNextQuestions,
+      score: results[0].score,
+      source: formatSource(results[0].entry),
+      usedChunks: createKnowledgeChunks(results),
     };
   }
 
@@ -1592,14 +1767,20 @@
       return {
         title: content.title || "回答",
         conclusion: "該当する回答が見つかりませんでした。",
-        reason: "質問の表現を少し変えると見つかる場合があります。",
+        reason: "現在登録されている回答の中に、近い内容がありませんでした。",
         note: "判断が必要な内容は本部へ確認してください。",
         detail: "",
         nextQuestions: defaultNextQuestions,
+        source: content.source || formatSource(content),
       };
     }
 
-    if (content.structured) return content.structured;
+    if (content.structured) {
+      return {
+        ...content.structured,
+        source: content.source || formatSource(content),
+      };
+    }
 
     if (content.category === "使い方") {
       return {
@@ -1609,17 +1790,19 @@
         note: "判断が必要な内容は本部へ確認してください。",
         detail: answer,
         nextQuestions: initialFaqs.slice(0, 4),
+        source: content.source || formatSource(content),
       };
     }
 
     if (content.category === "確認が必要です") {
       return {
-        title: "確認が必要です",
-        conclusion: "すみません、近い回答を見つけられませんでした。",
-        reason: "言い方を少し変えると、近い回答が出る場合があります。",
-        note: "急ぎの判断や例外対応は本部へ確認してください。",
+        title: "本部確認が必要です",
+        conclusion: "その内容は現在のマニュアルに記載がありません。",
+        reason: "本部に確認が必要な内容です。下のボタンから、直前の質問文付きで問い合わせできます。",
+        note: "これはマニュアル記載ではなく一般的な考え方です。契約・金額・返金・労務・広告表現は店舗判断で確定しないでください。",
         detail: answer,
         nextQuestions: initialFaqs.slice(0, 4),
+        source: "運営マニュアル 該当なし",
       };
     }
 
@@ -1635,6 +1818,7 @@
       note: caution.replace(/。$/, ""),
       detail: answer,
       nextQuestions: content.nextQuestions || defaultNextQuestions,
+      source: content.source || formatSource(content),
     };
   }
 
@@ -1689,15 +1873,90 @@
     return [
       data.title,
       "",
-      "結論",
+      "【結論】",
       data.conclusion,
       "",
-      "理由",
+      "【手順】",
       data.reason,
       "",
-      "注意",
+      "【注意点】",
       data.note,
+      "",
+      "【出典】",
+      data.source,
     ].join("\n");
+  }
+
+  function buildQuickChips(ask) {
+    const chips = createElement("div", "fc-quick-chips");
+    quickQuestionChips.forEach((question) => {
+      const button = createElement("button", "fc-quick-chip", question);
+      button.type = "button";
+      button.addEventListener("click", () => ask(question));
+      chips.appendChild(button);
+    });
+    return chips;
+  }
+
+  function createFeedbackControls(content, data) {
+    const feedback = createElement("div", "fc-feedback");
+    const solved = createElement("button", "", "解決した ✓");
+    const unresolved = createElement("button", "", "解決しなかった ✕");
+    const contact = createElement("a", "", "本部に問い合わせる");
+    const reason = createElement("input", "fc-feedback-reason");
+    reason.type = "text";
+    reason.placeholder = "理由を一言で入力できます";
+    contact.href = buildContactUrl(content._question, data);
+    contact.target = "_blank";
+    contact.rel = "noopener noreferrer";
+
+    const baseLog = () => ({
+      question: content._question || "",
+      answerTitle: data.title || "",
+      answerText: formatAnswerForCopy(data),
+      usedChunks: content._usedChunks || [],
+      similarityScore: content._score || 0,
+      source: data.source || "",
+      storeId: window.FcManualChatbotConfig?.storeId || "",
+    });
+
+    solved.type = "button";
+    unresolved.type = "button";
+    solved.addEventListener("click", () => {
+      solved.classList.add("is-selected");
+      unresolved.classList.remove("is-selected");
+      reason.classList.remove("is-open");
+      saveFeedbackLog({ ...baseLog(), rating: "solved", reason: "" });
+    });
+    unresolved.addEventListener("click", () => {
+      unresolved.classList.add("is-selected");
+      solved.classList.remove("is-selected");
+      reason.classList.add("is-open");
+      reason.focus();
+      saveFeedbackLog({ ...baseLog(), rating: "unresolved", reason: "" });
+    });
+    reason.addEventListener("change", () => {
+      saveFeedbackLog({ ...baseLog(), rating: "unresolved", reason: reason.value.trim() });
+    });
+
+    feedback.append(solved, unresolved, contact, reason);
+    return feedback;
+  }
+
+  function openLightbox(src, alt) {
+    const lightbox = createElement("div", "fc-lightbox");
+    const image = createElement("img", "");
+    image.src = src;
+    image.alt = alt || "マニュアル画像";
+    lightbox.appendChild(image);
+    lightbox.addEventListener("click", () => lightbox.remove());
+    document.body.appendChild(lightbox);
+  }
+
+  function collectAnswerImages(content) {
+    const direct = content.images || [];
+    const chunkImages = (content._usedChunks || []).flatMap((chunk) => chunk.images || []);
+    return [...direct, ...chunkImages].filter(Boolean).slice(0, 3);
   }
 
   function createManualSectionButton(item, container, ask) {
@@ -1764,15 +2023,31 @@
     const wrapper = createElement("div", "fc-answer");
     const answerCard = createElement("div", "fc-answer-card");
     answerCard.append(createElement("h3", "fc-answer-title", data.title));
-    answerCard.append(createAnswerBlock("✅ 結論", data.conclusion.replace(/(4,980円|1,980円|35,000円|40,000円|50,000円|80点以上|119日)/g, "<strong>$1</strong>")));
-    answerCard.append(createAnswerBlock("💡 理由", data.reason));
-    answerCard.append(createAnswerBlock("⚠️ 注意", data.note));
+    answerCard.append(createAnswerBlock("【結論】", data.conclusion.replace(/(4,980円|1,980円|35,000円|40,000円|50,000円|80点以上|119日|14,000円)/g, "<strong>$1</strong>")));
+    if (data.reason) answerCard.append(createAnswerBlock("【手順】", data.reason));
+    if (data.note) answerCard.append(createAnswerBlock("【注意点】", data.note));
 
     if (data.detail) {
       const details = createElement("details", "fc-answer-details");
-      details.append(createElement("summary", "", "📖 詳細を見る"));
+      details.append(createElement("summary", "", "詳細を見る"));
       details.append(createElement("p", "", data.detail));
       answerCard.appendChild(details);
+    }
+    answerCard.append(createElement("div", "fc-answer-source", `【出典】${data.source || "運営マニュアル 該当なし"}`));
+    const images = collectAnswerImages(content);
+    if (images.length) {
+      const imageList = createElement("div", "fc-answer-images");
+      images.forEach((image, index) => {
+        const src = typeof image === "string" ? image : image.url;
+        if (!src) return;
+        const img = createElement("img", "fc-answer-image");
+        img.src = src;
+        img.alt = typeof image === "string" ? `${data.title}の参考画像 ${index + 1}` : image.alt || `${data.title}の参考画像 ${index + 1}`;
+        img.loading = "lazy";
+        img.addEventListener("click", () => openLightbox(img.src, img.alt));
+        imageList.appendChild(img);
+      });
+      if (imageList.children.length) answerCard.appendChild(imageList);
     }
     const actions = createElement("div", "fc-answer-actions");
     const copy = createElement("button", "is-primary", "回答をコピー");
@@ -1783,11 +2058,11 @@
     focusInput.addEventListener("click", () => {
       document.querySelector(".fc-bot-input")?.focus();
     });
-    const manual = createElement("a", "", "マニュアルを開く");
-    manual.href = manualUrl;
-    manual.target = "_blank";
-    manual.rel = "noopener noreferrer";
-    actions.append(copy, focusInput, manual);
+    const contact = createElement("a", "", "本部に問い合わせる");
+    contact.href = buildContactUrl(content._question, data);
+    contact.target = "_blank";
+    contact.rel = "noopener noreferrer";
+    actions.append(copy, focusInput, contact);
     answerCard.appendChild(actions);
     wrapper.appendChild(answerCard);
 
@@ -1801,15 +2076,7 @@
     });
     wrapper.append(nextTitle, nextList);
 
-    const feedback = createElement("div", "fc-feedback");
-    feedback.append(createElement("button", "", "👍 役に立った"));
-    feedback.append(createElement("button", "", "👎 違った"));
-    const contact = createElement("a", "", "📞 本部へ問い合わせ");
-    contact.href = manualUrl;
-    contact.target = "_blank";
-    contact.rel = "noopener noreferrer";
-    feedback.appendChild(contact);
-    wrapper.appendChild(feedback);
+    wrapper.appendChild(createFeedbackControls(content, data));
     message.appendChild(wrapper);
   }
 
@@ -1871,6 +2138,7 @@
     manualLink.type = "button";
     manualLink.addEventListener("click", () => toggleAllManualSections(suggestions, manualLink, ask));
     suggestions.appendChild(manualLink);
+    const quickChips = buildQuickChips(ask);
     const faq = buildFaq(ask);
 
     const form = createElement("form", "fc-bot-form");
@@ -1882,7 +2150,7 @@
     submit.type = "submit";
     form.append(input, submit);
 
-    panel.append(header, form, suggestions, faq, messages);
+    panel.append(header, form, quickChips, suggestions, faq, messages);
     root.append(button, panel);
     (mountNode || document.body).appendChild(root);
 
@@ -1899,8 +2167,8 @@
       setOpen(true);
       root.classList.add("has-chat");
       appendMessage(messages, "user", trimmed, ask);
-      const thinking = appendMessage(messages, "bot", "AIが考えています", ask);
-      thinking.innerHTML = '<span class="fc-thinking">AIが考えています<span class="fc-thinking-dot"></span><span class="fc-thinking-dot"></span><span class="fc-thinking-dot"></span></span>';
+      const thinking = appendMessage(messages, "bot", "マニュアルを検索しています", ask);
+      thinking.innerHTML = '<span class="fc-thinking">マニュアルを検索しています<span class="fc-thinking-dot"></span><span class="fc-thinking-dot"></span><span class="fc-thinking-dot"></span></span>';
       window.setTimeout(() => {
         const result = buildAnswer(trimmed);
         thinking.remove();
@@ -1908,6 +2176,10 @@
           ...result.entry,
           related: result.related,
           nextQuestions: result.nextQuestions,
+          source: result.source,
+          _question: trimmed,
+          _score: result.score,
+          _usedChunks: result.usedChunks,
         }, ask);
       }, 450);
       input.value = "";
@@ -1916,6 +2188,8 @@
     window.FcManualChatbot = {
       ask,
       open: () => setOpen(true),
+      systemPrompt,
+      getFeedbackLogs: readFeedbackLogs,
     };
 
     button.addEventListener("click", () => setOpen(!root.classList.contains("is-open")));
