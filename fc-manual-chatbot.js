@@ -1197,6 +1197,47 @@
         background: linear-gradient(135deg, #4e92f3 0%, #0967df 100%);
         color: #fff;
       }
+      .fc-bot-nav {
+        order: 0;
+        display: none;
+        align-items: center;
+        gap: 8px;
+        position: sticky;
+        top: 0;
+        z-index: 4;
+        min-height: 52px;
+        padding: max(8px, env(safe-area-inset-top)) 12px 8px;
+        border-bottom: 1px solid rgba(216, 229, 246, 0.8);
+        background: rgba(244, 248, 255, 0.96);
+        backdrop-filter: blur(12px);
+      }
+      .fc-bot-root.has-chat .fc-bot-nav {
+        display: flex;
+      }
+      .fc-bot-nav button {
+        min-width: 44px;
+        min-height: 44px;
+        border: 1px solid var(--fc-border);
+        border-radius: 14px;
+        background: #fff;
+        color: var(--fc-line-dark);
+        font: inherit;
+        font-size: 14px;
+        font-weight: 900;
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+      .fc-bot-breadcrumb {
+        min-width: 0;
+        flex: 1;
+        color: #5d6b80;
+        font-size: 13px;
+        font-weight: 850;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: center;
+      }
       .fc-bot-inline .fc-bot-message {
         font-size: 16px;
       }
@@ -2261,6 +2302,16 @@
     close.setAttribute("aria-label", "閉じる");
     header.append(avatar, title, close);
 
+    const nav = createElement("nav", "fc-bot-nav");
+    nav.setAttribute("aria-label", "画面移動");
+    const back = createElement("button", "", "← 戻る");
+    back.type = "button";
+    const breadcrumb = createElement("div", "fc-bot-breadcrumb", "ホーム");
+    const home = createElement("button", "", "⌂");
+    home.type = "button";
+    home.setAttribute("aria-label", "ホームに戻る");
+    nav.append(back, breadcrumb, home);
+
     const messages = createElement("div", "fc-bot-messages");
     const suggestions = createElement("div", "fc-bot-suggestions");
     manualSections.forEach((item) => {
@@ -2282,9 +2333,11 @@
     submit.type = "submit";
     form.append(input, submit);
 
-    panel.append(header, form, quickChips, suggestions, faq, messages);
+    panel.append(header, nav, form, quickChips, suggestions, faq, messages);
     root.append(button, panel);
     (mountNode || document.body).appendChild(root);
+    let currentView = { mode: "home", title: "ホーム", scrollTop: 0 };
+    let restoringHistory = false;
 
     function setOpen(isOpen) {
       if (mountNode) return;
@@ -2293,11 +2346,61 @@
       if (isOpen) window.setTimeout(() => input.focus(), 50);
     }
 
+    function updateBreadcrumb(titleText) {
+      breadcrumb.textContent = titleText && titleText !== "ホーム" ? `ホーム > ${titleText}` : "ホーム";
+    }
+
+    function safeReplaceState(state) {
+      try {
+        window.history.replaceState({ fcBot: true, ...state }, "");
+      } catch (error) {
+        // Some embedded browsers can block history changes; the visible buttons still work.
+      }
+    }
+
+    function safePushState(state) {
+      try {
+        window.history.pushState({ fcBot: true, ...state }, "");
+      } catch (error) {
+        // Some embedded browsers can block history changes; the visible buttons still work.
+      }
+    }
+
+    function showHome(pushHistory) {
+      currentView = { mode: "home", title: "ホーム", scrollTop: messages.scrollTop };
+      root.classList.remove("has-chat");
+      updateBreadcrumb("ホーム");
+      if (pushHistory && !restoringHistory) safePushState(currentView);
+      window.setTimeout(() => panel.scrollTo?.({ top: 0, behavior: "smooth" }), 0);
+    }
+
+    function showChat(titleText, scrollTop, pushHistory) {
+      currentView = { mode: "chat", title: titleText || "質問", scrollTop: scrollTop || messages.scrollTop };
+      root.classList.add("has-chat");
+      updateBreadcrumb(currentView.title);
+      if (pushHistory && !restoringHistory) safePushState(currentView);
+      window.setTimeout(() => {
+        messages.scrollTop = Number.isFinite(scrollTop) ? scrollTop : messages.scrollHeight;
+      }, 0);
+    }
+
+    safeReplaceState(currentView);
+    window.addEventListener("popstate", (event) => {
+      if (!event.state?.fcBot) return;
+      restoringHistory = true;
+      if (event.state.mode === "home") {
+        showHome(false);
+      } else {
+        showChat(event.state.title, event.state.scrollTop, false);
+      }
+      restoringHistory = false;
+    });
+
     function ask(question) {
       const trimmed = question.trim();
       if (!trimmed) return;
       setOpen(true);
-      root.classList.add("has-chat");
+      showChat(trimmed, messages.scrollTop, true);
       appendMessage(messages, "user", trimmed, ask);
       const thinking = appendMessage(messages, "bot", "マニュアルを検索しています", ask);
       thinking.innerHTML = '<span class="fc-thinking">マニュアルを検索しています<span class="fc-thinking-dot"></span><span class="fc-thinking-dot"></span><span class="fc-thinking-dot"></span></span>';
@@ -2315,6 +2418,8 @@
           _usedChunks: result.usedChunks,
           _prompt: result.prompt,
         }, ask);
+        currentView = { mode: "chat", title: trimmed, scrollTop: messages.scrollTop };
+        safeReplaceState(currentView);
       }, 450);
       input.value = "";
     }
@@ -2330,6 +2435,14 @@
 
     button.addEventListener("click", () => setOpen(!root.classList.contains("is-open")));
     close.addEventListener("click", () => setOpen(false));
+    back.addEventListener("click", () => {
+      try {
+        window.history.back();
+      } catch (error) {
+        showHome(true);
+      }
+    });
+    home.addEventListener("click", () => showHome(true));
     form.addEventListener("submit", (event) => {
       event.preventDefault();
       ask(input.value);
