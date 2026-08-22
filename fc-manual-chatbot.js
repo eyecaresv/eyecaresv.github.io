@@ -4,36 +4,73 @@
   const botConfig = window.FcManualChatbotConfig || {};
   const brandName = botConfig.brandName || "アイケアLaBo FC";
   const manualUrl = botConfig.manualUrl || "https://eyecarelabo-fc-manual.netlify.app/";
-  const contactBaseUrl = botConfig.contactBaseUrl || "https://line.me/R/msg/text/";
+  const knowledgeUrl = botConfig.knowledgeUrl || "/fc-manual-knowledge.json";
+  const configUrl = botConfig.configUrl || "/fc-manual-chatbot-config.json";
+  let contactBaseUrl = botConfig.contactBaseUrl || "https://line.me/R/msg/text/";
   const mountSelector = botConfig.mountSelector || "";
   const feedbackLogKey = "eyecareFcAiFeedbackLogs";
+  let searchThreshold = Number(botConfig.searchThreshold || 8);
+  let maxChunks = Number(botConfig.maxChunks || 5);
+  let manualKnowledgeChunks = [];
+  let knowledgeLoadPromise = null;
 
   const systemPrompt = `あなたは「アイケアLaBo FC AI」です。
 フランチャイズ加盟店のオーナー・店長・スタッフからの、店舗運営に関する質問に答えます。
 
-最重要ルール:
+## 最重要ルール
 あなたの仕事は「マニュアルの場所を案内すること」ではなく「その場で答え切ること」です。
-リンクやページ番号だけを返さず、参考資料に該当箇所があるなら、その内容を要約して回答本文に書き、末尾に出典を添えます。
+利用者は施術の合間や接客の直前に、スマホで急いで質問しています。
+別のページやPDFを開かせた時点で、あなたの回答は失敗です。
 
-回答フォーマット:
+以下は禁止です:
+- 「マニュアルをご確認ください」だけで終わる
+- 「詳しくは運営マニュアルP.○○をご覧ください」だけで終わる
+- 「本部にお問い合わせください」だけで終わる（後述の例外を除く）
+- リンクやページ番号だけを返す
+
+正しい振る舞い:
+- 参考資料に該当箇所があるなら、その内容を要約して回答本文に書く
+- そのうえで、根拠として出典を末尾に小さく添える
+
+## 回答フォーマット
+必ずこの順番で書いてください。
 1. 【結論】1〜2文で先に答える
 2. 【手順】操作や対応が必要な場合、番号付きで具体的に書く
-3. 【注意点】例外・よくある間違い・期限がある場合のみ書く
+3. 【注意点】例外・よくある間違い・期限がある場合のみ書く（なければ省略）
 4. 【出典】「運営マニュアル ○○章」の形式で1行だけ
 
-分量:
-標準は300字以内。前置きや挨拶は書かず、いきなり結論から入る。
+## 分量
+- 標準は300字以内。スマホで1〜2スクロールに収める
+- 前置き・挨拶・「ご質問ありがとうございます」等は書かない。いきなり結論から入る
+- 手順が5ステップを超える場合は、まず全体像を3行で示してから詳細を書く
 
-参考資料に答えがない場合:
-推測で答えず「その内容は現在のマニュアルに記載がありません。本部に確認が必要な内容です。」と返し、問い合わせ導線を出します。
+## 参考資料に答えがない場合
+推測で答えてはいけません。以下のテンプレートで返してください。
 
-判断が分かれる領域:
-契約、労務、医療行為との線引き、広告表現、返金・クレームの最終判断、金額変更や値引き可否は断定せず本部確認へ誘導します。
+「その内容は現在のマニュアルに記載がありません。
+本部に確認が必要な内容です。下のボタンから問い合わせてください。
+（分かる範囲での一般的な考え方: ○○）」
 
-効果・効能:
+一般論を添える場合は「これはマニュアル記載ではなく一般的な考え方です」と必ず明示してください。
+
+## 判断が分かれる/リスクのある領域
+以下は必ず本部確認へ誘導してください。断定回答は禁止です。
+- 契約・加盟金・ロイヤリティ・解約に関すること
+- 労務、給与、雇用契約に関すること
+- 医療行為との線引き、広告表現の薬機法まわり
+- 顧客とのトラブル、返金、クレーム対応の最終判断
+- 金額の変更、値引きの可否
+
+## 効果・効能の表現について
 アイケアLaBoは整体サロンであり医療機関ではありません。「治る」「治療」「診断」「効果が保証される」は使いません。
+顧客への説明文を作成する場合もこのルールを適用してください。
 
-参考資料:
+## トーン
+- 現場スタッフ向けの、簡潔で実務的な日本語
+- 敬語は使うが、堅すぎない
+- 曖昧な表現で逃げない。条件で分岐するなら「Aの場合は○○、Bの場合は△△」と書く
+
+## 参考資料
 {{KNOWLEDGE}}`;
 
   const knowledgeBase = [
@@ -791,10 +828,77 @@
       .filter((token) => token && !stopWords.has(token));
   }
 
+  async function fetchJson(url) {
+    if (!url || !window.fetch) return null;
+    try {
+      const response = await fetch(url, { cache: "no-store" });
+      if (!response.ok) return null;
+      return await response.json();
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function normalizeKnowledgeChunk(chunk) {
+    if (!chunk || typeof chunk !== "object") return null;
+    const id = String(chunk.id || "").trim();
+    const body = String(chunk.body || "").trim();
+    if (!id || !body) return null;
+    return {
+      id,
+      topic: String(chunk.topic || "").trim(),
+      chapter: String(chunk.chapter || "").trim(),
+      heading: String(chunk.heading || "").trim(),
+      body,
+      imageUrls: Array.isArray(chunk.imageUrls) ? chunk.imageUrls.filter(Boolean) : [],
+      updatedAt: String(chunk.updatedAt || "").trim(),
+      keywords: Array.isArray(chunk.keywords) ? chunk.keywords.filter(Boolean) : [],
+      nextQuestions: Array.isArray(chunk.nextQuestions) ? chunk.nextQuestions.filter(Boolean) : [],
+    };
+  }
+
+  function chunkToEntry(chunk) {
+    return {
+      id: chunk.id,
+      category: chunk.chapter || chunk.topic || "運営マニュアル",
+      title: chunk.heading || chunk.topic || "回答",
+      keywords: [chunk.topic, chunk.chapter, chunk.heading, ...chunk.keywords].filter(Boolean),
+      answer: chunk.body,
+      images: chunk.imageUrls,
+      updatedAt: chunk.updatedAt,
+      nextQuestions: chunk.nextQuestions,
+      sourceChunk: chunk,
+    };
+  }
+
+  function getSearchEntries() {
+    const externalEntries = manualKnowledgeChunks.map(chunkToEntry);
+    return [...externalEntries, ...knowledgeBase];
+  }
+
+  async function loadRuntimeData() {
+    const [config, knowledge] = await Promise.all([fetchJson(configUrl), fetchJson(knowledgeUrl)]);
+    if (config && typeof config === "object") {
+      if (Number.isFinite(Number(config.searchThreshold))) searchThreshold = Number(config.searchThreshold);
+      if (Number.isFinite(Number(config.maxChunks))) maxChunks = Number(config.maxChunks);
+      if (config.contactBaseUrl) contactBaseUrl = String(config.contactBaseUrl);
+    }
+    if (Array.isArray(knowledge)) {
+      manualKnowledgeChunks = knowledge.map(normalizeKnowledgeChunk).filter(Boolean);
+    }
+  }
+
+  function ensureKnowledgeLoaded() {
+    if (!knowledgeLoadPromise) {
+      knowledgeLoadPromise = loadRuntimeData();
+    }
+    return knowledgeLoadPromise;
+  }
+
   function scoreEntry(query, entry) {
     const queryTokens = tokenize(query);
     const queryNorm = normalizeText(query);
-    const keywordTokens = entry.keywords.flatMap(tokenize);
+    const keywordTokens = (entry.keywords || []).flatMap(tokenize);
     const titleTokens = tokenize(entry.title);
     const answerTokens = tokenize(entry.answer);
     let score = 0;
@@ -805,37 +909,61 @@
       if (answerTokens.includes(token)) score += 1.5;
     });
 
-    entry.keywords.forEach((keyword) => {
+    (entry.keywords || []).forEach((keyword) => {
       const normalizedKeyword = normalizeText(keyword);
       if (normalizedKeyword && queryNorm.includes(normalizedKeyword)) score += 16;
     });
+    if (entry.sourceChunk?.topic && queryNorm.includes(normalizeText(entry.sourceChunk.topic))) score += 10;
+    if (entry.sourceChunk?.heading && queryNorm.includes(normalizeText(entry.sourceChunk.heading))) score += 10;
 
     return score;
   }
 
   function searchKnowledge(query) {
-    return knowledgeBase
+    return getSearchEntries()
       .map((entry) => ({ entry, score: scoreEntry(query, entry) }))
       .filter((result) => result.score > 0)
       .sort((a, b) => b.score - a.score)
-      .slice(0, 3);
+      .slice(0, maxChunks);
   }
 
   function formatSource(entry) {
     if (!entry || entry.category === "確認が必要です") return "運営マニュアル 該当なし";
+    if (entry.sourceChunk) {
+      const chapter = entry.sourceChunk.chapter || entry.sourceChunk.topic || "運営マニュアル";
+      const heading = entry.sourceChunk.heading || entry.title || "";
+      return `運営マニュアル ${chapter}${heading ? ` / ${heading}` : ""}`;
+    }
     return `運営マニュアル ${entry.category} / ${entry.title}`;
   }
 
   function createKnowledgeChunks(results) {
     return results.map((result) => ({
       id: result.entry.id || "",
+      topic: result.entry.sourceChunk?.topic || result.entry.category || "",
       chapter: result.entry.category || "",
       heading: result.entry.title || "",
       body: result.entry.answer || "",
       score: result.score,
       source: formatSource(result.entry),
+      imageUrls: result.entry.images || [],
       images: result.entry.images || [],
+      updatedAt: result.entry.updatedAt || result.entry.sourceChunk?.updatedAt || "",
     }));
+  }
+
+  function buildKnowledgeText(chunks) {
+    return chunks
+      .map((chunk, index) => [
+        `#${index + 1} ${chunk.chapter} / ${chunk.heading}`,
+        `ID: ${chunk.id}`,
+        `本文: ${chunk.body}`,
+      ].join("\n"))
+      .join("\n\n");
+  }
+
+  function buildPromptWithKnowledge(chunks) {
+    return systemPrompt.replace("{{KNOWLEDGE}}", buildKnowledgeText(chunks));
   }
 
   function buildContactUrl(question, data) {
@@ -1724,20 +1852,22 @@
 
   function buildAnswer(query) {
     const results = searchKnowledge(query);
-    if (!results.length || results[0].score < 8) {
+    if (!results.length || results[0].score < searchThreshold) {
       return {
         entry: {
           category: "確認が必要です",
           title: "本部確認が必要です",
           answer:
-            "その内容は現在のマニュアルに記載がありません。本部に確認が必要な内容です。分かる範囲での一般的な考え方として、契約・金額・返金・労務・広告表現など判断が分かれる内容は、店舗判断で確定せず本部確認をしてください。",
+            "その内容は現在のマニュアルに記載がありません。本部に確認が必要な内容です。下のボタンから問い合わせてください。これはマニュアル記載ではなく一般的な考え方ですが、契約・金額・返金・労務・広告表現など判断が分かれる内容は、店舗判断で確定せず本部確認をしてください。",
         },
         related: [],
         score: results[0]?.score || 0,
         source: "運営マニュアル 該当なし",
         usedChunks: [],
+        prompt: buildPromptWithKnowledge([]),
       };
     }
+    const usedChunks = createKnowledgeChunks(results);
 
     return {
       entry: results[0].entry,
@@ -1745,10 +1875,11 @@
         .slice(1)
         .filter((result) => result.score >= 18 && result.score >= results[0].score * 0.55)
         .map((result) => result.entry),
-      nextQuestions: results[0].entry.structured?.nextQuestions || defaultNextQuestions,
+      nextQuestions: results[0].entry.structured?.nextQuestions || results[0].entry.nextQuestions || defaultNextQuestions,
       score: results[0].score,
       source: formatSource(results[0].entry),
-      usedChunks: createKnowledgeChunks(results),
+      usedChunks,
+      prompt: buildPromptWithKnowledge(usedChunks),
     };
   }
 
@@ -2109,6 +2240,7 @@
 
   function initChatbot() {
     injectStyles();
+    ensureKnowledgeLoaded();
 
     const mountNode = mountSelector ? document.querySelector(mountSelector) : null;
     const root = createElement("div", mountNode ? "fc-bot-root fc-bot-inline is-open" : "fc-bot-root");
@@ -2169,7 +2301,8 @@
       appendMessage(messages, "user", trimmed, ask);
       const thinking = appendMessage(messages, "bot", "マニュアルを検索しています", ask);
       thinking.innerHTML = '<span class="fc-thinking">マニュアルを検索しています<span class="fc-thinking-dot"></span><span class="fc-thinking-dot"></span><span class="fc-thinking-dot"></span></span>';
-      window.setTimeout(() => {
+      window.setTimeout(async () => {
+        await ensureKnowledgeLoaded();
         const result = buildAnswer(trimmed);
         thinking.remove();
         appendMessage(messages, "bot", {
@@ -2180,6 +2313,7 @@
           _question: trimmed,
           _score: result.score,
           _usedChunks: result.usedChunks,
+          _prompt: result.prompt,
         }, ask);
       }, 450);
       input.value = "";
@@ -2189,6 +2323,8 @@
       ask,
       open: () => setOpen(true),
       systemPrompt,
+      getKnowledgeChunks: () => manualKnowledgeChunks.slice(),
+      buildPromptWithKnowledge,
       getFeedbackLogs: readFeedbackLogs,
     };
 

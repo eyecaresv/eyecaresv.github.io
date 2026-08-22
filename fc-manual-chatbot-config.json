@@ -1,0 +1,5 @@
+{
+  "searchThreshold": 8,
+  "maxChunks": 5,
+  "contactBaseUrl": "https://line.me/R/msg/text/"
+}
