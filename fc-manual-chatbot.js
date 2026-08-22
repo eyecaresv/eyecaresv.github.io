@@ -966,6 +966,69 @@
     return systemPrompt.replace("{{KNOWLEDGE}}", buildKnowledgeText(chunks));
   }
 
+  function isTopicOverviewQuery(query) {
+    const normalized = normalizeText(query).replace(/\s+/g, "");
+    if (!normalized || normalized.length > 15) return false;
+    return !/[？?]|どう|教えて|したい|できます|必要|いくら|どこ|いつ|なぜ|方法|手順/.test(query);
+  }
+
+  function normalizeTopicLabel(query) {
+    return normalizeText(query)
+      .replace(/\s+/g, "")
+      .replace(/(って|とは|について|のこと|を教えて|教えて)$/g, "");
+  }
+
+  function collectTopicQuestions(chunks) {
+    const questions = [];
+    chunks.forEach((chunk) => {
+      (chunk.nextQuestions || []).forEach((question) => {
+        if (question && !questions.includes(question)) questions.push(question);
+      });
+    });
+    return questions.slice(0, 8);
+  }
+
+  function buildTopicOverview(query, results) {
+    const normalizedQuery = normalizeTopicLabel(query);
+    const topicChunks = manualKnowledgeChunks.filter((chunk) => normalizeTopicLabel(chunk.topic) === normalizedQuery);
+    if (!topicChunks.length) return null;
+    const rankedResults = topicChunks
+      .map((chunk) => ({ entry: chunkToEntry(chunk), score: scoreEntry(query, chunkToEntry(chunk)) || 40 }))
+      .sort((a, b) => b.score - a.score)
+      .slice(0, maxChunks);
+    const usedChunks = createKnowledgeChunks(rankedResults);
+    const bullets = topicChunks
+      .slice(0, 5)
+      .map((chunk) => `・${chunk.heading}: ${chunk.body.split("。").filter(Boolean)[0]}。`)
+      .join("\n");
+    const notes = topicChunks
+      .map((chunk) => chunk.body.split("。").find((sentence) => /確認|注意|判断|本部/.test(sentence)))
+      .filter(Boolean);
+
+    return {
+      entry: {
+        id: `${normalizedQuery}-overview`,
+        category: "トピック概要",
+        title: `${query}の要点`,
+        answer: bullets,
+        structured: {
+          title: `${query}の要点`,
+          conclusion: `${query}について、まず押さえる内容は以下です。`,
+          reason: bullets,
+          note: notes[0] ? `${notes[0]}。` : "金額変更・解約・返金など判断が分かれる内容は本部確認してください。",
+          detail: topicChunks.map((chunk) => `【${chunk.heading}】\n${chunk.body}`).join("\n\n"),
+          nextQuestions: collectTopicQuestions(topicChunks),
+        },
+      },
+      related: results.slice(1).map((result) => result.entry),
+      nextQuestions: collectTopicQuestions(topicChunks),
+      score: rankedResults[0]?.score || results[0]?.score || 0,
+      source: `運営マニュアル ${query}関連`,
+      usedChunks,
+      prompt: buildPromptWithKnowledge(usedChunks),
+    };
+  }
+
   function buildContactUrl(question, data) {
     const text = [
       "アイケアLaBo FC AIから本部確認をお願いします。",
@@ -1893,6 +1956,10 @@
 
   function buildAnswer(query) {
     const results = searchKnowledge(query);
+    if (isTopicOverviewQuery(query)) {
+      const overview = buildTopicOverview(query, results);
+      if (overview) return overview;
+    }
     if (!results.length || results[0].score < searchThreshold) {
       return {
         entry: {
