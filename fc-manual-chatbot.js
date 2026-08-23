@@ -973,9 +973,17 @@
   }
 
   function normalizeTopicLabel(query) {
-    return normalizeText(query)
+    const label = normalizeText(query)
       .replace(/\s+/g, "")
       .replace(/(って|とは|について|のこと|を教えて|教えて)$/g, "");
+    const aliases = {
+      hpb: "ホットペッパ",
+      hotpepper: "ホットペッパ",
+      hotpepperbeauty: "ホットペッパ",
+      "ホットペッパ": "ホットペッパ",
+      "ホットペッパビュティ": "ホットペッパ",
+    };
+    return aliases[label] || label;
   }
 
   function collectTopicQuestions(chunks) {
